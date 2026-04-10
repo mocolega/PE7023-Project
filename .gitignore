@@ -1,0 +1,11 @@
+*.aux
+*.bbl
+*.fdb_latkmk
+*.fls
+*.lof
+*.log
+*.lot
+*.out
+*.pdf
+*.gz
+*.toc
