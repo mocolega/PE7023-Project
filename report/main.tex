@@ -1,0 +1,93 @@
+% =============================================================
+%  MAIN REPORT TEMPLATE
+%  Compile this file to produce the full report.
+%  Each section lives in its own file under sections/
+% =============================================================
+
+\documentclass[12pt, letterpaper]{book}
+
+% ----- Packages -----------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}              % Improved font rendering
+\usepackage[margin=1in]{geometry} % Page margins
+\usepackage{setspace}             % Line spacing
+\usepackage{parskip}              % Space between paragraphs
+\usepackage{titlesec}             % Section title formatting
+\usepackage{fancyhdr}             % Headers and footers
+\usepackage{graphicx}             % Figures
+\usepackage{booktabs}             % Professional tables
+\usepackage{caption}              % Caption formatting
+\usepackage{hyperref}             % Clickable TOC & cross-references
+\usepackage{cleveref}             % Smart cross-references
+\usepackage{natbib}               % Bibliography (author-year style)
+\usepackage{appendix}             % Appendix formatting
+\usepackage{lipsum}               % Placeholder text — remove when done
+\usepackage{siunitx}              % SI units formatting
+
+% ----- Hyperref setup -----------------------------------------
+\hypersetup{
+    colorlinks  = true,
+    linkcolor   = blue,
+    citecolor   = green,
+    urlcolor    = blue,
+    pdftitle    = {Project Report},
+    pdfauthor   = {Author Name},
+}
+
+% ----- Page style ---------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\leftmark}
+\fancyhead[R]{\small\thepage}
+\fancyfoot[C]{\small\textit{Project Report}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% ----- Section title formatting -------------------------------
+\titleformat{\chapter}[display]
+    {\normalfont\Large\bfseries}{\chaptertitlename\ \thechapter}{10pt}{\Huge}
+\titlespacing*{\chapter}{0pt}{-20pt}{20pt}
+
+% ----- Line spacing -------------------------------------------
+\onehalfspacing
+
+% =============================================================
+%  DOCUMENT BODY
+% =============================================================
+\begin{document}
+
+% ----- Title Page ---------------------------------------------
+\input{sections/00_titlepage}
+
+% ----- Front matter (roman numerals) --------------------------
+\frontmatter
+
+% Executive Summary (unnumbered, appears before TOC)
+\input{sections/01_executive_summary}
+
+% Table of Contents
+\tableofcontents
+\listoffigures          % Remove if no figures
+\listoftables           % Remove if no tables
+\newpage
+
+% ----- Main matter (arabic numerals) --------------------------
+\mainmatter
+
+\input{sections/02_introduction}
+\input{sections/03_procedure}
+\input{sections/04_results}
+\input{sections/05_conclusions}
+
+% ----- References ---------------------------------------------
+\bibliographystyle{plainnat}         % Change style as needed
+\bibliography{references}            % Points to references.bib
+\addcontentsline{toc}{chapter}{References}
+
+% ----- Back matter --------------------------------------------
+\backmatter
+
+\input{sections/06_appendices}
+\input{sections/07_addendum}
+
+\end{document}
