@@ -1,0 +1,5 @@
+Diameter (in),Inlet Pressure (psia),Acceptable (<=1200 psi)?
+6,4121,No - Too high
+8,1900,No - Too high
+10,1040,Yes - Selected
+12,655,Yes - But oversized
