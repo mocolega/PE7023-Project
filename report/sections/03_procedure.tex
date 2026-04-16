@@ -79,7 +79,7 @@ From the plot, it is observed that the PI range is between 5.5 and 6.0 STB/d/psi
     \caption{Productivity Index vs. Wellbore Radius}
     \label{fig:pi_x_radii}
 \end{figure}
-It was also assumed that the tubing size should be $0.8 r_{wf}$. The behaviour of the Producivity Index is shown in Figure \ref{fig:pi_x_tubing_radius}. Because the PI is just a function of the wellbore radius, the plot is the same as in Figure \ref{fig:pi_x_radii}, but with a different x-axis. 
+It was also assumed that the tubing size should be $0.8 r_{wf}$. The Figure \ref{fig:pi_x_tubing_radius} shows the relationship between the Productivity Index and the tubing internal diameter. Because the PI is just a function of the wellbore radius, the plot is the same as in Figure \ref{fig:pi_x_radii}, but with a different x-axis. 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/pi_vs_tubing_radius.png}
@@ -88,7 +88,7 @@ It was also assumed that the tubing size should be $0.8 r_{wf}$. The behaviour o
 \end{figure}
 
 It was adivised that the asphaltene precipitation occurs at a pressure of 1100 psis, so the minimum wellhead pressure should be at least 1200 psia. 
-A wellbore model of Well 1 was created using Pipesim and the impact of tubing ID was evaluated. The results are shown in Figure \ref{fig:well1_q_x_tubing_radius}. It can be observed that the flow rate is higher than the maximum allowed for all tubing sizes, but the 4.5 inches tubing has a flow rate of 7000 STB/d, which is much higher than the maximum allowed. The 7 inches tubing has a flow rate of 6500 STB/d, which is also higher than the maximum allowed but closer to it. The 7.75 inches tubing has a flow rate of 6400 STB/d, which is just below the maximum allowed. Therefore, the 7 inches tubing was selected for Well 1.
+A wellbore model of Well 1 was created using Pipesim and the impact of tubing ID was evaluated. The results are shown in Figure \ref{fig:well1_q_x_tubing_radius}. It can be observed that the flow rate is higher than the maximum allowed for tubing sizes greater or equal to 2.922 inches. 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/rate_vs_tubing_id.png}
@@ -104,7 +104,7 @@ The production forecast predicts the water cut will improve and it was necessary
     \caption{Flow Rate vs. Water Cut for Well 1}
     \label{fig:well1_q_x_water_cut}
 \end{figure}
-So, it was observed that when the well starts to produce water, the maximum liquid rate is not achieved, so it is necessary to implement artificial lift. 
+So, for a water cut higher than 10\%, the maximum liquid rate is not achieved, and it is necessary to implement artificial lift. 
 The only artificial lift option available is the gas-lift. The gas-lift rate was evaluated for different water cuts and the results are shown in Figure \ref{fig:well1_gas_lift_rate_x_water_cut}. 
 It is observed that the minimum gas-lift rate that allows to produce the maximum liquid rate for all water cuts is 1.5 MMscf/d. 
 \begin{figure}[htbp]
@@ -113,11 +113,8 @@ It is observed that the minimum gas-lift rate that allows to produce the maximum
     \caption{Gas-Lift Rate and Water Cut vs. Liquid Rate for Well 1}
     \label{fig:well1_gas_lift_rate_x_water_cut}
 \end{figure}
-% ----- Subsection 2 -------------------------------------------
-\section{Part 2}
-\label{sec:proc_phase2}
 It was also analyzed the impact of the gas-lift rate and water cut on the wellhead temperature. The results are shown in Figure \ref{fig:well1_q_x_gas_lift_and_temp}. 
-It was not informed the minimum wellhead temperature, but for this configuration, the wellhead temperature is above 176$^\circ$F for all water cuts and gas-lift rates.
+It was not informed the minimum wellhead temperature, but for this configuration, the wellhead temperature is above 173$^\circ$F for all water cuts and gas-lift rates.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/rate_vs_gas_lift_and_temp.png}
@@ -125,7 +122,60 @@ It was not informed the minimum wellhead temperature, but for this configuration
     \label{fig:well1_q_x_gas_lift_and_temp}
 \end{figure}
 
+Using Pipesim was used to find the Wellhead Pressure (WHP) for different water cuts and gas-lift rates. The results are shown in Figure \ref{fig:well1_whp_x_gas_lift_and_water_cut}. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/pressure_vs_gas_lift.png}
+    \caption{Wellhead Pressure vs. Gas-Lift Rate and Water Cut for Well 1}
+    \label{fig:well1_whp_x_gas_lift_and_water_cut}
+\end{figure}    
+
+\subsection{Production Profile and Short Economic Analysis}
+
+In this section the analysis was made just for Well 1. Because the production forecast predicts a water cut improvement, the system analysis should be made for different water cuts, since the flow conditions and necessary gas-lift rate will change with the water cut.
+The water cut forecast for Well 1is shown in Figure \ref{fig:water_cut_forecast}. The water cut is in function of cumulative oil production, starting at 5\% and improving to 95\% at the end of the forecast period. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/water_cut_forecast.png}
+    \caption{Water Cut Forecast for Well 1}
+    \label{fig:water_cut_forecast}
+\end{figure}
+For the production forecast, it was assumed that the well will produce at the maximum allowed flow rate for all water cuts, which is 6428.57 STB/d. The production profile for Well 1 is shown in Figure \ref{fig:production_profile}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/production_profile.png}
+    \caption{Production Profile for Well 1}
+    \label{fig:production_profile}
+\end{figure}
+For the required gas-lift rate, it was used the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut} to find the necessary gas-lift rate for each water cut. The gas-lift rate profile for Well 1 is shown in Figure \ref{fig:gas_lift_profile}. For values that are not in the original plot, it was used linear interpolation to find the necessary gas-lift rate. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/gas_lift_profile.png}
+    \caption{Gas-Lift Rate Profile for Well 1}
+    \label{fig:gas_lift_profile}
+\end{figure}
+It was required to verify the network operating conditions for different water cuts, 5\%, 40\% and 80\%. For each of these water cuts, the necessary gas-lift rate was found using the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut}. The results are shown in Table \ref{tab:network_conditions}.
+\begin{table}[htbp]
+    \centering
+    \caption{Network Operating Conditions for Different Water Cuts}
+    \label{tab:network_conditions}
+    \begin{tabular}{l c }
+        \toprule
+        \textbf{Water Cut} & \textbf{Gas-Lift Rate (MMscf/d)} \\
+        \midrule
+        5\%     & 0.00   \\
+        40\%    & 0.69   \\
+        80\%    & 1.40   \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+% ----- Subsection 2 -------------------------------------------
+\section{Part 2}
+\label{sec:proc_phase2}
+
+
 
 \lipsum[6] % Replace with description of second method / phase
 
-% Add or remove \section{} blocks as needed.
+
+
