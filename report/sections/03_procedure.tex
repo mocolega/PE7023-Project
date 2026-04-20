@@ -169,11 +169,225 @@ It was required to verify the network operating conditions for different water c
         \bottomrule
     \end{tabular}
 \end{table}
-% ----- Subsection 2 -------------------------------------------
-\section{Part 2}
-\label{sec:proc_phase2}
+% ----- Section 2.2 -------------------------------------------
+\clearpage
+\subsection{Pipeline Design}
+\label{subsec:pipeline_design}
 
+\subsubsection{Boundary Conditions}
 
+To model the subsea pipeline independently from the well network, the pipeline
+was treated as a mass-to-pressure boundary condition system. The inlet
+conditions at manifold~2 (m2) were derived from the well-level PIPESIM
+simulations carried out in Part~1.1 (Question~I-6), assuming all seven wells
+behave identically to W1. Because gas-lift injection gas flows through the
+pipeline, the effective pipeline GOR was computed as:
+
+\begin{equation}
+    \text{GOR}_{\text{pipeline}} = \text{GOR}_{\text{sat}} +
+    \frac{G_{\text{inj}}}{q_{o,\text{pipeline}}}
+\end{equation}
+
+The resulting boundary conditions applied across the seven watercut scenarios
+are summarised in Table~\ref{tab:bc_pipeline}.
+
+\begin{table}[htbp]
+\centering
+\caption{Pipeline boundary conditions derived from Part~I-6 (all 7 wells,
+         total $q_{\text{liq}} = 45{,}000$~STB/d).}
+\label{tab:bc_pipeline}
+\begin{tabular}{cccc}
+\toprule
+WC (\%) & GOR\textsubscript{pipeline} (scf/STB) & WHT (°F) & $q_{\text{liq}}$ (STB/d) \\
+\midrule
+2  & 800     & 173.9 & 45{,}000 \\
+5  & 800     & 175.2 & 45{,}000 \\
+20 & 839     & 180.3 & 45{,}000 \\
+35 & 944     & 184.0 & 45{,}000 \\
+70 & 1{,}422 & 189.1 & 45{,}000 \\
+90 & 3{,}289 & 190.7 & 45{,}000 \\
+95 & 5{,}778 & 191.1 & 45{,}000 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Diameter Selection}
+
+A PIPESIM network model was constructed with a source node representing
+the combined well output at m2, a single flowline following the 14-point
+bathymetric survey of the m2--LOP corridor (total length 46{,}617~ft, maximum
+riser depth 3{,}000~ft), and a sink set at the separator pressure of 350~psia.
+Black-oil fluid properties (API~45, GOR~800~scf/STB, $\mu_o = 0.902$~cp,
+$B_o = 1.2$) were assigned. The worst-case watercut scenario (WC~=~2\%) was
+used for diameter screening, as it produced the highest inlet pressure for a
+given diameter.
+
+Four candidate internal diameters were evaluated against the maximum allowable
+wellhead pressure (WHP) constraint of 1{,}200~psia:
+
+\begin{table}[htbp]
+\centering
+\caption{Inlet pressure for candidate pipe diameters at WC~=~2\%, 7~wells.}
+\label{tab:diameter_selection}
+\begin{tabular}{ccc}
+\toprule
+Diameter (in) & Inlet Pressure (psia) & Selected \\
+\midrule
+6  & 4{,}121 & $\times$ \\
+8  & 1{,}900 & $\times$ \\
+10 & 1{,}040 & \checkmark \\
+12 & 655     & $\times$ (oversized) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A 10-inch internal diameter was selected: it is the smallest diameter whose
+inlet pressure (1{,}040~psia) satisfies the 1{,}200~psia WHP constraint with
+adequate margin, while avoiding the unnecessary capital cost of a 12-inch
+line. Figure~\ref{fig:q3_diameter} illustrates the monotonic decrease in
+inlet pressure with increasing diameter.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figs/pressure_vs_diameter.png}
+    \caption{Inlet pressure vs.\ pipeline internal diameter (7~wells,
+             WC~=~2\%). The dashed red line indicates the 1{,}200~psia WHP
+             limit. A 10-inch diameter is the minimum viable selection.}
+    \label{fig:q3_diameter}
+\end{figure}
+
+\paragraph{Reduced-production verification.}
+The company requires the pipeline to remain operable when three wells go
+offline simultaneously (i.e.\ 4~wells, $q_{\text{liq}} = 25{,}714$~STB/d).
+Under these conditions the 10-inch line yields an inlet pressure of only
+605~psia, well below the 1{,}200~psia limit, confirming operability under
+reduced production. Figure~\ref{fig:q3_wells} compares the two operating
+cases.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{figs/pressure_vs_wells_online.png}
+    \caption{Inlet pressure for 7-well and 4-well operation
+             (10-inch diameter, WC~=~2\%). Both cases satisfy the WHP
+             constraint.}
+    \label{fig:q3_wells}
+\end{figure}
+
+\subsubsection{Inlet Pressure vs.\ Water Cut}
+
+With the 10-inch diameter fixed, sensitivity runs were performed across the
+full watercut range. Table~\ref{tab:q4_results} and
+Figure~\ref{fig:q4_pressure} show that the pipeline inlet pressure is
+\emph{not} constant: it decreases monotonically from 1{,}040~psia at WC~=~2\%
+to 785~psia at WC~=~95\%.
+
+\begin{table}[htbp]
+\centering
+\caption{Inlet pressure and outlet temperature as a function of watercut
+         (10-inch diameter, 7~wells).}
+\label{tab:q4_results}
+\begin{tabular}{ccc}
+\toprule
+WC (\%) & Inlet $P$ (psia) & Outlet $T$ (\textdegree F) \\
+\midrule
+2  & 1{,}040 & 104.5 \\
+5  & 1{,}030 & 106.3 \\
+20 & 1{,}001 & 114.9 \\
+35 &   989   & 122.7 \\
+70 &   879   & 137.0 \\
+90 &   819   & 142.1 \\
+95 &   785   & 144.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figs/pressure_vs_watercut.png}
+    \caption{Pipeline inlet pressure vs.\ watercut (10-inch diameter,
+             7~wells). The inlet pressure decreases with increasing watercut
+             due to the lower mixture density and reduced frictional losses at
+             higher water fractions. All cases remain below the 1{,}200~psia
+             WHP limit.}
+    \label{fig:q4_pressure}
+\end{figure}
+
+The pressure decrease with watercut arises primarily because higher water
+fractions reduce the in-situ GOR, lowering the mixture compressibility and
+frictional pressure drop along the riser. To ensure the wellhead pressure is
+maintained at or above 1{,}200~psia under all conditions, a choke or
+back-pressure control valve could be installed downstream; however, this would
+modify the effective pressure boundary condition and may require an iterative
+update of the well-model boundary conditions.
+
+Figure~\ref{fig:q4_temp} shows the corresponding outlet temperatures, which
+all exceed the Wax Appearance Temperature (WAT) of 100\textdegree F for the
+7-well full-production case---a finding revisited in the following section.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figs/temp_vs_watercut_7wells.png}
+    \caption{Outlet temperature vs.\ watercut (10-inch diameter, 7~wells).
+             All outlet temperatures exceed the WAT of 100\textdegree F
+             (dashed red line) under full production.}
+    \label{fig:q4_temp}
+\end{figure}
+
+\subsubsection{Thermal Analysis and Insulation Design}
+
+\paragraph{Worst-case scenario identification.}
+The thermal analysis was repeated for the 4-well reduced-production case
+with 1~inch of insulation ($k = 0.2$~Btu/(h$\cdot$\textdegree F$\cdot$ft))
+across all watercut scenarios. Figure~\ref{fig:q5_temp_wc} shows that outlet
+temperatures fall below the WAT of 100\textdegree F at low watercuts. The
+worst case is WC~=~2\%, 4~wells, which yields an outlet temperature of only
+86.98\textdegree F---significantly below WAT, posing a wax deposition risk.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figs/temp_vs_watercut_4wells.png}
+    \caption{Outlet temperature vs.\ watercut (10-inch diameter, 4~wells,
+             1-inch insulation). Outlet temperatures fall below
+             WAT~=~100\textdegree F (dashed red line) at low watercuts.
+             The worst case occurs at WC~=~2\%.}
+    \label{fig:q5_temp_wc}
+\end{figure}
+
+\paragraph{Insulation thickness selection.}
+Insulation thickness was iterated for the worst-case condition
+(WC~=~2\%, 4~wells). The results are summarised in
+Table~\ref{tab:insulation} and Figure~\ref{fig:q5_insulation}.
+
+\begin{table}[htbp]
+\centering
+\caption{Outlet temperature vs.\ insulation thickness for the worst-case
+         scenario (WC~=~2\%, 4~wells).}
+\label{tab:insulation}
+\begin{tabular}{ccc}
+\toprule
+Insulation Thickness (in) & Outlet $T$ (\textdegree F) & Above WAT? \\
+\midrule
+1 & 86.98 & $\times$ \\
+2 & 107.5 & \checkmark \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{figs/temp_vs_insulation.png}
+    \caption{Outlet temperature vs.\ insulation thickness for the worst-case
+             scenario (WC~=~2\%, 4~wells). A minimum of 2~inches of insulation
+             is required to keep the outlet temperature above
+             WAT~=~100\textdegree F.}
+    \label{fig:q5_insulation}
+\end{figure}
+
+A minimum insulation thickness of \textbf{2~inches} is therefore specified
+for the pipeline. This ensures that even under the most thermally demanding
+condition---low watercut and reduced well count---the fluid temperature at
+the LOP exceeds the WAT of 100\textdegree F, preventing wax deposition and
+maintaining flow assurance throughout the field life.
 
 \lipsum[6] % Replace with description of second method / phase
 
