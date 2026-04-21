@@ -2,15 +2,20 @@
 %  EXECUTIVE SUMMARY  (sections/01_executive_summary.tex)
 % =============================================================
 
+% =============================================================
+%  EXECUTIVE SUMMARY  (sections/01_executive_summary.tex)
+% =============================================================
+
 \chapter*{Executive Summary}
 \addcontentsline{toc}{chapter}{Executive Summary}
 \markboth{Executive Summary}{Executive Summary}
 
-% PURPOSE: A concise summary (typically one page) of the entire report.
-% Include: project objective, key methods, principal results, and main
-% conclusions. This section should be self-contained — a busy reader
-% should understand the work after reading only this page.
-%
-% NOTE: An expanded version of this appears in the Conclusions chapter.
+This report presents the well design, surface network configuration, pipeline sizing, economic analysis, and production strategy for a subsea field development project comprising seven production wells. The work was carried out in two parts: a PIPESIM-based study and the development of an in-house Python network simulator.
 
-\lipsum[1-2] % Replace with your executive summary text
+\textbf{Well Design.} Each well was designed to deliver a maximum liquid rate of 6{,}429~STB/d, corresponding to a field target of 45{,}000~STB/d. A productivity-index analysis identified a 7-inch OD (5.92-inch ID) production casing as the optimal selection, balancing inflow performance against drilling cost. The minimum tubing ID of 2.922 inches (3.5-inch OD) was determined from PIPESIM wellbore simulations. Gas-lift is required at water cuts above 5\%, with a maximum injection rate of 1.6~MMscf/d per well at 95\% water cut. A minimum wellhead pressure of 1{,}200~psia is maintained throughout, preventing asphaltene precipitation.
+
+\textbf{Pipeline Design.} The subsea flowline connecting manifold M2 to the land-based operations point (LOP) is 46{,}617~ft long with a maximum riser depth of 3{,}000~ft. A 10-inch internal diameter was selected as the minimum viable size, yielding an inlet pressure of 1{,}040~psia at worst-case conditions (WC~=~2\%, 7~wells), within the 1{,}200~psia constraint. The system remains operable with four wells online. Thermal analysis confirmed that a minimum insulation thickness of 2~inches is required to keep outlet temperatures above the wax appearance temperature of 100\textdegree F under reduced-production conditions.
+
+\textbf{Economic Analysis and Production Optimization.} A gas-lift optimization algorithm was applied to maximize net profit over the production forecast. At \$50/BBL, optimized gas-lift scheduling sustains economic production across the full forecast period, compared to an economic limit at day~14{,}512 without optimization. At \$30/BBL, optimization extends economic production by approximately 10{,}015~days. Break-even water cuts were estimated at 86\% and 78\% for oil prices of \$50/BBL and \$30/BBL, respectively.
+
+\textbf{Network Simulator.} An integrated Python network simulator was developed, coupling subsurface inflow models with surface multiphase flow using the Hagedorn--Brown (wellbore) and Beggs--Brill (pipeline) correlations. Simulation results showed good agreement with PIPESIM, demonstrating the tool's utility for production optimization when commercial software is unavailable.

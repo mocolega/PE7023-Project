@@ -269,7 +269,7 @@ class HagedornBrown:
     # Main pressure gradient
     # ------------------------------------------------------------------
 
-    def dpdl_psi_ft(self, q_total_stbd: float, p_psia: float, include_acceleration: bool = True) -> float:
+    def dpdl_psi_ft(self, q_total_stbd: float, p_psia: float, include_acceleration: bool = False) -> float:
         """
         Total pressure gradient [psi/ft] for vertical upward flow.
         """
@@ -329,16 +329,20 @@ class HagedornBrown:
             mu_l_cp=mu_l_cp,
             sigma_l=sigma_l,
         )
-
+        
         # Bubble modification
         if regime == "bubble":
-            HL = 1.0
-
+            HL_gw = self._griffith_wallis_holdup(vsl, vsg, vm)
+            HL = HL_gw
+        
         # Mist fallback
         elif regime == "mist":
             HL = max(lam_l, 1e-6)
         else:
             HL = min(max(HL, lam_l), 1.0)
+            
+        # HL = HL*0.62        
+
 
         # -------------------------
         # Mixture properties
@@ -404,12 +408,16 @@ class HagedornBrown:
         vsl, vsg, vm, lam_l = _superficial_velocities(q_l, q_g, self.A)
         HL, regime = self._liquid_holdup(vsl, vsg, vm, p_psia, rho_l, rho_g, mu_l_cp, sigma_l)
 
+        # Bubble modification
         if regime == "bubble":
-            HL = 1.0
+            HL_gw = self._griffith_wallis_holdup(vsl, vsg, vm)
+            HL = HL_gw
+
+        # Mist fallback
         elif regime == "mist":
             HL = max(lam_l, 1e-6)
-
-        HL = min(max(HL, lam_l), 1.0)
+        else:
+            HL = min(max(HL, lam_l), 1.0)
 
         rho_m = rho_l * HL + rho_g * (1.0 - HL)
         mu_tp = math.exp(

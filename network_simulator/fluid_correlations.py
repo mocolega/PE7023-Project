@@ -149,6 +149,27 @@ class BlackOilFluid:
     # Oil FVF – anchored to measured Bo(Pb) = 1.2 bbl/STB
     # ================================================================
 
+    # def oil_fvf(self, p_psia: float) -> float:
+    #     pb   = self.pb_psia
+    #     Rs   = self.solution_gor(p_psia)
+    #     Rs_b = self.gor_scf_stb
+    #     sg   = self.sg_gas
+    #     api  = self.api
+    #     T    = self.T_F
+    #     sg_100 = sg * (1.0 + 5.912e-5 * api * self.p_sep_psia
+    #                    * math.log10(max(self.p_sep_psia, 1.0) / 114.7))
+    #     C1, C2, C3 = 4.670e-4, 1.100e-5, 1.337e-9
+
+    #     def _vb(r):
+    #         return (1.0 + C1*r + C2*(T-60)*(api/sg_100)
+    #                 + C3*r*(T-60)*(api/sg_100))
+
+    #     if p_psia <= pb:
+    #         ratio = self.bo_pb / max(_vb(Rs_b), 1e-6)
+    #         return max(_vb(Rs) * ratio, 1.0)
+    #     else:
+    #         co = self._oil_compressibility(pb, Rs_b)
+    #         return self.bo_pb * math.exp(-co * (p_psia - pb))
     def oil_fvf(self, p_psia: float) -> float:
         pb   = self.pb_psia
         Rs   = self.solution_gor(p_psia)
@@ -156,20 +177,29 @@ class BlackOilFluid:
         sg   = self.sg_gas
         api  = self.api
         T    = self.T_F
-        sg_100 = sg * (1.0 + 5.912e-5 * api * self.p_sep_psia
-                       * math.log10(max(self.p_sep_psia, 1.0) / 114.7))
+
+        sg_100 = sg * (
+            1.0
+            + 5.912e-5 * api * self.p_sep_psia
+            * math.log10(max(self.p_sep_psia, 1.0) / 114.7)
+        )
         C1, C2, C3 = 4.670e-4, 1.100e-5, 1.337e-9
 
         def _vb(r):
-            return (1.0 + C1*r + C2*(T-60)*(api/sg_100)
-                    + C3*r*(T-60)*(api/sg_100))
+            return (
+                1.0
+                + C1 * r
+                + C2 * (T - 60.0) * (api / sg_100)
+                + C3 * r * (T - 60.0) * (api / sg_100)
+            )
 
         if p_psia <= pb:
-            ratio = self.bo_pb / max(_vb(Rs_b), 1e-6)
-            return max(_vb(Rs) * ratio, 1.0)
-        else:
-            co = self._oil_compressibility(pb, Rs_b)
-            return self.bo_pb * math.exp(-co * (p_psia - pb))
+            ratio = self.bo_pb / max(_vb(Rs_b), 1e-12)
+            bo = _vb(Rs) * ratio
+            return bo   # inspect raw behavior first
+
+        co = self._oil_compressibility(pb, Rs_b)
+        return self.bo_pb * math.exp(-co * (p_psia - pb))   
 
     def _oil_compressibility(self, p_psia: float, Rs: float) -> float:
         co = (-1433 + 5*Rs + 17.2*self.T_F
@@ -338,3 +368,55 @@ if __name__ == "__main__":
               f"  {f.oil_viscosity_cp(p):>7.4f}  {f.z_factor(p):>7.4f}"
               f"  {f.mixture_density_lbmft3(p):>8.3f}"
               f"  {f.mixture_viscosity_cp(p):>8.4f}")
+        
+        print("\n" + "=" * 80)
+    
+    
+    print("FREE GAS CHECK")
+    print("=" * 80)
+
+    q_total_stbd = 1000.0
+    q_o_stbd = q_total_stbd * (1.0 - f.wc)
+
+    print(
+        f"{'p(psia)':>8}  {'Rs(scf/STB)':>12}  {'FreeGOR':>10}  "
+        f"{'Bg(ft3/scf)':>12}  {'qg(ft3/s)':>12}  {'qg(Mscf/d)':>12}"
+    )
+    print("  " + "─" * 72)
+
+    for p in [3800, 3500, 3000, 2500, 2000, 1500, 1000, 500]:
+        Rs = f.solution_gor(p)
+        free_gor = max(f.gor_scf_stb - Rs, 0.0)
+        Bg = f.gas_fvf_ft3_scf(p)
+
+        # liberated free gas volumetric rate at flowing conditions
+        qg_ft3_day = q_o_stbd * free_gor * Bg
+        qg_ft3_s = qg_ft3_day / 86400.0
+
+        # optional: free gas at standard conditions
+        qg_scf_day = q_o_stbd * free_gor
+        qg_mscf_day = qg_scf_day / 1000.0
+
+        print(
+            f"{p:8.0f}  {Rs:12.2f}  {free_gor:10.2f}  "
+            f"{Bg:12.5f}  {qg_ft3_s:12.5f}  {qg_mscf_day:12.2f}"
+        )
+
+    print("\n" + "=" * 80)
+    print("FREE GAS FRACTION CHECK")
+    print("=" * 80)
+
+    for p in [3800, 3500, 3000, 2500, 2000, 1500, 1000, 500]:
+        ql = f.liquid_rate_ft3s(q_total_stbd, p)
+        Rs = f.solution_gor(p)
+        free_gor = max(f.gor_scf_stb - Rs, 0.0)
+        Bg = f.gas_fvf_ft3_scf(p)
+        qg = q_o_stbd * free_gor * Bg / 86400.0
+
+        vmix = ql + qg
+        lambda_l = ql / vmix if vmix > 0 else 1.0
+
+        print(
+            f"p={p:5.0f} psia | ql={ql:8.5f} ft3/s | "
+            f"qg={qg:8.5f} ft3/s | lambda_l={lambda_l:7.4f}"
+        )
