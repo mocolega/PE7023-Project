@@ -41,13 +41,16 @@ def cp_to_lbmfts(mu_cp: float) -> float:
 # Helper: superficial velocities & no-slip holdup
 # ---------------------------------------------------------------------------
 
-def _superficial_velocities(q_l_ft3s: float, q_g_ft3s: float, A_ft2: float):
-    """Return (vsl, vsg, vm, lambda_l) – no gas in pure liquid case."""
-    vsl = q_l_ft3s / A_ft2
-    vsg = q_g_ft3s / A_ft2
-    vm  = vsl + vsg
-    lam = vsl / max(vm, 1e-12)
-    return vsl, vsg, vm, lam
+def _superficial_velocities(q_l_ft3s: float, q_g_ft3s: float, area_ft2: float):
+    """
+    Returns:
+        vsl, vsg, vm, lambda_l
+    """
+    vsl = q_l_ft3s / max(area_ft2, 1e-20)
+    vsg = q_g_ft3s / max(area_ft2, 1e-20)
+    vm = vsl + vsg
+    lam_l = vsl / max(vm, 1e-20)
+    return vsl, vsg, vm, lam_l
 
 
 # ===========================================================================
@@ -56,382 +59,813 @@ def _superficial_velocities(q_l_ft3s: float, q_g_ft3s: float, A_ft2: float):
 
 class HagedornBrown:
     """
-    Hagedorn & Brown (1965) vertical multiphase pressure gradient.
+    Modified Hagedorn & Brown vertical multiphase pressure-gradient model.
+
+    Structure
+    ---------
+    1) Pure liquid: single-phase liquid friction + hydrostatic
+    2) Bubble flow: Griffith & Wallis modification
+    3) Mist flow: Duns & Ros style mist fallback
+    4) Otherwise: Hagedorn & Brown pseudo-holdup core
+    5) Friction from Moody/Colebrook using a two-phase Reynolds number
+    6) Optional acceleration correction
 
     Notes
     -----
-    - Uses the four H&B correlating groups to find liquid holdup H_L.
-    - Applies Griffith-Wallis bubble-flow correction (common practice).
-    - Returns total dP/dL (friction + hydrostatic) in psi/ft.
-    - Assumes no gas for single-phase liquid (HL = 1).
-
-    Parameters
-    ----------
-    fluid      : BlackOilFluid  instance
-    ID_in      : pipe inner diameter [in]
+    - Intended for vertical upward flow only.
+    - Uses a smooth approximation to the H&B holdup chart.
+    - This is a practical engineering implementation of
+      "Hagedorn & Brown + standard modifications."
     """
 
-    def __init__(self, fluid: BlackOilFluid, ID_in: float):
+    def __init__(self, fluid: BlackOilFluid, ID_in: float, eps_in: float = 0.001):
         self.fluid = fluid
-        self.d     = ID_in / 12.0          # ft
-        self.A     = math.pi * self.d**2 / 4.0  # ft²
+        self.d = ID_in / 12.0                      # ft
+        self.A = math.pi * self.d**2 / 4.0        # ft^2
+        self.eps = eps_in / 12.0                  # ft
+
+    # ------------------------------------------------------------------
+    # Fluid accessors
+    # ------------------------------------------------------------------
 
     def _gas_density(self, p_psia: float) -> float:
-        """Gas density using Hall-Yarborough z-factor."""
         return self.fluid.gas_density_lbmft3(p_psia)
 
     def _gas_viscosity_cp(self, p_psia: float) -> float:
-        """Gas viscosity using fluid's Lee-Kesler with H-Y z [cp]."""
         return self.fluid.gas_viscosity_cp(p_psia)
 
-    def _liquid_holdup(self, vsl: float, vsg: float, vm: float,
-                       p_psia: float,
-                       rho_l: float, rho_g: float,
-                       mu_l_lbmfts: float, sigma_l: float = 30.0) -> float:
+    # ------------------------------------------------------------------
+    # Friction factor
+    # ------------------------------------------------------------------
+
+    @staticmethod
+    def _colebrook_white(Re: float, eps_rel: float) -> float:
         """
-        H&B holdup via four correlating groups (H&B 1965).
-
-        Valid range: NGv < ~20 (slug/churn flow at moderate gas rates).
-        Above NGv = 20: Griffith-Wallis (1961) slug holdup is used instead,
-        which gracefully handles the churn-to-mist transition and avoids
-        the chart extrapolation that causes HL → 1.0 at high gas velocities.
-
-        Griffith-Wallis:
-            HL = 1 - (1 - λ_l) * sqrt(vsg / vm)   [bounded to (λ_l, 1.0)]
+        Moody/Colebrook friction factor.
         """
-        lam_l = vsl / max(vm, 1e-12)
+        if Re < 2100.0:
+            return 64.0 / max(Re, 1.0)
 
-        if vsg < 1e-6:
-            return 1.0
+        # Swamee-Jain initial guess
+        f = 0.25 / (math.log10(eps_rel / 3.7 + 5.74 / Re**0.9) ** 2)
 
-        d  = self.d
-        mu_l_cp = mu_l_lbmfts / 6.7197e-4
+        for _ in range(12):
+            rhs = -2.0 * math.log10(eps_rel / 3.7 + 2.51 / (Re * math.sqrt(f)))
+            f_new = 1.0 / (rhs * rhs)
+            if abs(f_new - f) < 1e-10:
+                return f_new
+            f = f_new
 
-        # H&B correlating groups
-        NLv = vsl * (rho_l / (GC * sigma_l))**0.25
-        NGv = vsg * (rho_l / (GC * sigma_l))**0.25
-        Nd  = d   * (rho_l * GC / sigma_l)**0.5
-        NL  = mu_l_cp * (GC / (rho_l * sigma_l**3))**0.25
+        return f
 
-        # ── Griffith-Wallis fallback for high NGv (churn/mist) ─────────
-        # H&B chart was built for NGv < ~20.  Above that, the chart
-        # curves converge and holdup decreases with increasing vsg.
-        # Griffith-Wallis captures this correctly.
-        NGV_MAX = 20.0
-        if NGv > NGV_MAX:
-            HL_gw = 1.0 - (1.0 - lam_l) * math.sqrt(vsg / max(vm, 1e-6))
-            return max(lam_l, min(1.0, HL_gw))
+    # ------------------------------------------------------------------
+    # Standard modifications
+    # ------------------------------------------------------------------
 
-        # ── H&B chart (valid range NGv ≤ 20) ───────────────────────────
-        log_NL = max(-3.0, min(0.0, math.log10(max(NL, 1e-4))))
-        CNL = 10.0 ** (-2.69851 + 0.15840*log_NL
-                       - 0.55099*log_NL**2 + 0.54784*log_NL**3)
-
-        p_ref = 14.7
-        G1 = NLv * (p_psia**0.1) * CNL / (max(NGv, 0.01)**0.575 * (p_ref**0.1) * Nd)
-        log_G1 = max(-3.0, min(1.0, math.log10(max(G1, 1e-6))))
-        HL_psi_ratio = 10.0 ** (1.0 - 0.43942*log_G1 + 0.14672*log_G1**2)
-        HL_psi_ratio = min(max(HL_psi_ratio, 0.01), 1.0)
-
-        G2     = (NGv * (p_psia / p_ref)**0.1) / Nd
-        log_G2 = math.log10(max(G2, 1e-6))
-        psi    = 1.0 + 0.3 * math.tanh(2.0 * log_G2 + 2.0)
-        psi    = max(1.0, min(psi, 1.8))
-
-        HL = HL_psi_ratio * psi
-        # Blend smoothly to Griffith-Wallis as NGv → NGV_MAX
-        blend  = (NGv / NGV_MAX)**2          # 0→1 as NGv→NGV_MAX
-        HL_gw  = 1.0 - (1.0 - lam_l) * math.sqrt(vsg / max(vm, 1e-6))
-        HL_gw  = max(lam_l, min(1.0, HL_gw))
-        HL     = (1.0 - blend) * HL + blend * HL_gw
-
+    @staticmethod
+    def _griffith_wallis_holdup(vsl: float, vsg: float, vm: float) -> float:
+        """
+        Simple Griffith & Wallis style slug/bubble holdup expression.
+        Bounded so HL >= lambda_l.
+        """
+        lam_l = vsl / max(vm, 1e-20)
+        HL = 1.0 - (1.0 - lam_l) * math.sqrt(vsg / max(vm, 1e-20))
         return min(max(HL, lam_l), 1.0)
 
-    def dpdl_psi_ft(self, q_total_stbd: float, p_psia: float) -> float:
+    # ------------------------------------------------------------------
+    # Hagedorn & Brown core pseudo-holdup
+    # ------------------------------------------------------------------
+
+    def _hb_holdup_core(
+        self,
+        vsl: float,
+        vsg: float,
+        vm: float,
+        p_psia: float,
+        rho_l: float,
+        mu_l_cp: float,
+        sigma_l: float = 30.0,
+    ) -> float:
         """
-        Total dP/dL [psi/ft] for vertical upward flow.
+        Smooth H&B pseudo-holdup approximation based on the classic
+        four correlating groups.
 
-        Flow regime handling
-        --------------------
-        Bubble/slug  (vsg < v_crit) : Griffith-Wallis + H&B holdup
-        Mist/annular (vsg >= v_crit): Wallis annular mist model
-            - HL = λ_l  (no-slip, liquid dispersed as droplets in gas core)
-            - friction based on gas phase with liquid entrainment correction
+        Returns H_L bounded between lambda_l and 1.
+        """
+        lam_l = vsl / max(vm, 1e-20)
 
-        Turner critical velocity separates slug from annular/mist:
-            v_crit = 5.02 * [σ(ρ_l - ρ_g) / ρ_g²]^0.25   [ft/s]
+        if vsg < 1e-12:
+            return 1.0
+
+        # H&B dimensionless groups in field-units style form
+        NLv = vsl * (rho_l / max(GC * sigma_l, 1e-20))**0.25
+        NGv = vsg * (rho_l / max(GC * sigma_l, 1e-20))**0.25
+        Nd  = self.d * (rho_l * GC / max(sigma_l, 1e-20))**0.5
+        NL  = mu_l_cp * (GC / max(rho_l * sigma_l**3, 1e-20))**0.25
+
+        # Viscosity correction factor
+        log_NL = math.log10(max(NL, 1e-6))
+        log_NL = min(max(log_NL, -4.0), 1.0)
+
+        CNL = 10.0 ** (
+            -2.69851
+            + 0.15840 * log_NL
+            - 0.55099 * log_NL**2
+            + 0.54784 * log_NL**3
+        )
+
+        # Pressure correction normalized to atmospheric reference
+        p_ref = 14.7
+
+        # Group-1 style quantity
+        G1 = (
+            NLv
+            * (p_psia / p_ref)**0.1
+            * CNL
+            / max(NGv**0.575 * Nd, 1e-20)
+        )
+
+        # Smooth approximation of chart for HL/psi
+        log_G1 = math.log10(max(G1, 1e-8))
+        log_G1 = min(max(log_G1, -5.0), 2.0)
+
+        log_HL_over_psi = (
+            -0.001864 * log_G1**3
+            - 0.025194 * log_G1**2
+            + 0.113419 * log_G1
+            - 0.138397
+        )
+
+        HL_over_psi = min(max(10.0**log_HL_over_psi, 0.01), 1.0)
+
+        # Group-2 style psi factor
+        G2 = NGv * (p_psia / p_ref)**0.1 / max(Nd, 1e-20)
+        log_G2 = math.log10(max(G2, 1e-8))
+
+        psi = 1.0 + 0.3 * math.tanh(2.0 * log_G2 + 2.0)
+        psi = min(max(psi, 1.0), 1.8)
+
+        HL = HL_over_psi * psi
+        HL = min(max(HL, lam_l), 1.0)
+
+        return HL
+
+    # ------------------------------------------------------------------
+    # Flow regime selection for standard modifications
+    # ------------------------------------------------------------------
+
+    def _liquid_holdup(
+        self,
+        vsl: float,
+        vsg: float,
+        vm: float,
+        p_psia: float,
+        rho_l: float,
+        rho_g: float,
+        mu_l_cp: float,
+        sigma_l: float = 30.0,
+    ) -> tuple[float, str]:
+        """
+        Returns:
+            HL, regime
+
+        Regime logic used here:
+        - bubble: Griffith & Wallis correction
+        - mist: Duns & Ros style fallback (HL = lambda_l)
+        - else: H&B core
+        """
+        lam_l = vsl / max(vm, 1e-20)
+
+        if vsg < 1e-10:
+            return 1.0, "liquid"
+
+        # Common velocity numbers for regime logic
+        NGv = vsg * (rho_l / max(G * sigma_l, 1e-20))**0.25
+        Ns  = vm  * (rho_l / max(G * sigma_l, 1e-20))**0.25
+
+        # Griffith & Wallis bubble criterion
+        is_bubble = (vsg < 0.25 * vm) and (Ns < 4.0)
+        if is_bubble:
+            return 1.0, "bubble"
+
+        # Duns & Ros style mist threshold
+        NGV_MIST = 60.0
+        if NGv > NGV_MIST:
+            return max(lam_l, 1e-6), "mist"
+
+        # Standard H&B core elsewhere
+        HL = self._hb_holdup_core(
+            vsl=vsl,
+            vsg=vsg,
+            vm=vm,
+            p_psia=p_psia,
+            rho_l=rho_l,
+            mu_l_cp=mu_l_cp,
+            sigma_l=sigma_l,
+        )
+        return HL, "hb"
+
+    # ------------------------------------------------------------------
+    # Main pressure gradient
+    # ------------------------------------------------------------------
+
+    def dpdl_psi_ft(self, q_total_stbd: float, p_psia: float, include_acceleration: bool = True) -> float:
+        """
+        Total pressure gradient [psi/ft] for vertical upward flow.
         """
         fluid = self.fluid
+        sigma_l = 30.0
 
-        q_l   = fluid.liquid_rate_ft3s(q_total_stbd, p_psia)
+        # -------------------------
+        # Liquid
+        # -------------------------
+        q_l = fluid.liquid_rate_ft3s(q_total_stbd, p_psia)
         rho_l = fluid.mixture_density_lbmft3(p_psia)
-        mu_l  = cp_to_lbmfts(fluid.mixture_viscosity_cp(p_psia))
+        mu_l_cp = fluid.mixture_viscosity_cp(p_psia)
+        mu_l = cp_to_lbmfts(mu_l_cp)
 
-        Rs_sc    = fluid.solution_gor(p_psia)
+        # -------------------------
+        # Gas
+        # -------------------------
+        Rs_sc = fluid.solution_gor(p_psia)
         free_gor = max(fluid.gor_scf_stb - Rs_sc, 0.0)
         q_o_stbd = q_total_stbd * (1.0 - fluid.wc)
         Bg_ft3_scf = fluid.gas_fvf_ft3_scf(p_psia)
-        q_g  = q_o_stbd * free_gor * Bg_ft3_scf / 86400.0 * 5.614583
+
+        # scf/day * ft3/scf / day->s = ft3/s
+        q_g = q_o_stbd * free_gor * Bg_ft3_scf / 86400.0
 
         rho_g = self._gas_density(p_psia)
-        mu_g  = cp_to_lbmfts(self._gas_viscosity_cp(p_psia))
+        mu_g_cp = self._gas_viscosity_cp(p_psia)
+        mu_g = cp_to_lbmfts(mu_g_cp)
 
+        # -------------------------
+        # Velocities
+        # -------------------------
         vsl, vsg, vm, lam_l = _superficial_velocities(q_l, q_g, self.A)
 
-        # Single-phase liquid (no free gas)
-        if vsg < 1e-4:
-            Re_sl = rho_l * vsl * self.d / max(mu_l, 1e-20)
-            f_sl  = 64.0/max(Re_sl,1) if Re_sl < 2100 else 0.3164/max(Re_sl,1)**0.25
-            dpdl_fric = f_sl * rho_l * vsl**2 / (2.0 * GC * self.d)
-            dpdl_hyd  = rho_l * G / GC
-            return (dpdl_fric + dpdl_hyd) * PSF_TO_PSI
+        # -------------------------
+        # Pure liquid
+        # -------------------------
+        if vsg < 1e-10:
+            Re = rho_l * vsl * self.d / max(mu_l, 1e-20)
+            f = self._colebrook_white(Re, self.eps / self.d)
 
-        # Turner critical gas velocity for mist flow transition [ft/s]
-        sigma_l = 30.0   # surface tension, dynes/cm ≈ lbm/s²·ft * 0.00685
-        # Turner (1969): v_crit = 5.02 * [sigma*(rho_l-rho_g)/rho_g²]^0.25
-        # (coefficients tuned for field units: sigma in dynes/cm, rho in lbm/ft³)
-        sigma_si = sigma_l * 6.852e-3        # dynes/cm → lbm/s²
-        drho     = max(rho_l - rho_g, 1.0)
-        v_turner = 5.02 * (sigma_si * drho / max(rho_g, 0.01)**2)**0.25
+            dpdl_fric = f * rho_l * vsl**2 / (2.0 * GC * self.d)
+            dpdl_elev = rho_l * G / GC
+            total = dpdl_fric + dpdl_elev
+            return total * PSF_TO_PSI
 
-        # ── MIST / ANNULAR FLOW ───────────────────────────────────────────
-        if vsg >= v_turner:
-            # Liquid holdup = no-slip (droplets entrained in gas)
-            HL    = lam_l
-            HL    = max(HL, 1e-6)
+        # -------------------------
+        # Holdup
+        # -------------------------
+        HL, regime = self._liquid_holdup(
+            vsl=vsl,
+            vsg=vsg,
+            vm=vm,
+            p_psia=p_psia,
+            rho_l=rho_l,
+            rho_g=rho_g,
+            mu_l_cp=mu_l_cp,
+            sigma_l=sigma_l,
+        )
 
-            # Mixture density
-            rho_m = rho_l * HL + rho_g * (1.0 - HL)
-
-            # Friction: gas-dominated, Moody on gas Reynolds
-            # Wallis (1969) annular friction with entrainment factor
-            Re_g  = rho_g * vsg * self.d / max(mu_g, 1e-20)
-            if Re_g < 2100:
-                f_g = 64.0 / max(Re_g, 1.0)
-            else:
-                f_g = 0.3164 / max(Re_g, 1.0)**0.25
-
-            # Wallis entrainment correction: f_tp = f_g * (1 + 75*HL)
-            f_tp = f_g * (1.0 + 75.0 * HL)
-
-            dpdl_fric = f_tp * rho_g * vsg**2 / (2.0 * GC * self.d)
-            dpdl_hyd  = rho_m * G / GC
-
-            return max((dpdl_fric + dpdl_hyd) * PSF_TO_PSI, 0.0)
-
-        # ── BUBBLE / SLUG FLOW (H&B) ──────────────────────────────────────
-        LB = 1.071 - 0.2218 * vm**2 / self.d
-        LB = max(LB, 0.25)
-
-        if lam_l >= LB:
+        # Bubble modification
+        if regime == "bubble":
             HL = 1.0
+
+        # Mist fallback
+        elif regime == "mist":
+            HL = max(lam_l, 1e-6)
         else:
-            HL = self._liquid_holdup(vsl, vsg, vm, p_psia, rho_l, rho_g, mu_l)
-            # Clamp: holdup cannot be less than no-slip holdup
-            HL = max(HL, lam_l)
+            HL = min(max(HL, lam_l), 1.0)
+
+        # -------------------------
+        # Mixture properties
+        # -------------------------
+        rho_m = rho_l * HL + rho_g * (1.0 - HL)
+
+        # H&B friction uses a two-phase Reynolds-number style treatment.
+        # Practical implementation: no-slip mixture viscosity for Re.
+        mu_tp = math.exp(
+            lam_l * math.log(max(mu_l, 1e-30))
+            + (1.0 - lam_l) * math.log(max(mu_g, 1e-30))
+        )
+
+        Re_tp = rho_m * vm * self.d / max(mu_tp, 1e-20)
+        f_tp = self._colebrook_white(Re_tp, self.eps / self.d)
+
+        # Mist-flow adjustment: use gas-dominated friction in mist
+        if regime == "mist":
+            Re_g = rho_g * max(vsg, 1e-12) * self.d / max(mu_g, 1e-20)
+            f_g = self._colebrook_white(Re_g, self.eps / self.d)
+            f_tp = f_g
+
+        # -------------------------
+        # Pressure-gradient terms
+        # -------------------------
+        dpdl_fric = f_tp * rho_m * vm**2 / (2.0 * GC * self.d)
+        dpdl_elev = rho_m * G / GC
+
+        if include_acceleration:
+            # Practical kinetic-energy correction
+            Ek = rho_m * vm * vsg / (GC * max(p_psia * 144.0, 1e-20))
+            Ek = min(max(Ek, 0.0), 0.95)
+            total = (dpdl_fric + dpdl_elev) / (1.0 - Ek)
+        else:
+            Ek = 0.0
+            total = dpdl_fric + dpdl_elev
+
+        return total * PSF_TO_PSI
+
+    # ------------------------------------------------------------------
+    # Debug details
+    # ------------------------------------------------------------------
+
+    def details(self, q_total_stbd: float, p_psia: float, include_acceleration: bool = True) -> dict:
+        fluid = self.fluid
+        sigma_l = 30.0
+
+        q_l = fluid.liquid_rate_ft3s(q_total_stbd, p_psia)
+        rho_l = fluid.mixture_density_lbmft3(p_psia)
+        mu_l_cp = fluid.mixture_viscosity_cp(p_psia)
+        mu_l = cp_to_lbmfts(mu_l_cp)
+
+        Rs_sc = fluid.solution_gor(p_psia)
+        free_gor = max(fluid.gor_scf_stb - Rs_sc, 0.0)
+        q_o_stbd = q_total_stbd * (1.0 - fluid.wc)
+        Bg_ft3_scf = fluid.gas_fvf_ft3_scf(p_psia)
+        q_g = q_o_stbd * free_gor * Bg_ft3_scf / 86400.0
+
+        rho_g = self._gas_density(p_psia)
+        mu_g_cp = self._gas_viscosity_cp(p_psia)
+        mu_g = cp_to_lbmfts(mu_g_cp)
+
+        vsl, vsg, vm, lam_l = _superficial_velocities(q_l, q_g, self.A)
+        HL, regime = self._liquid_holdup(vsl, vsg, vm, p_psia, rho_l, rho_g, mu_l_cp, sigma_l)
+
+        if regime == "bubble":
+            HL = 1.0
+        elif regime == "mist":
+            HL = max(lam_l, 1e-6)
+
+        HL = min(max(HL, lam_l), 1.0)
 
         rho_m = rho_l * HL + rho_g * (1.0 - HL)
-        mu_m  = mu_l * lam_l + mu_g * (1.0 - lam_l)
-        v_m   = vm
+        mu_tp = math.exp(
+            lam_l * math.log(max(mu_l, 1e-30))
+            + (1.0 - lam_l) * math.log(max(mu_g, 1e-30))
+        )
 
-        Re = rho_m * v_m * self.d / max(mu_m, 1e-20)
-        f_m = 64.0 / max(Re, 1.0) if Re < 2100 else 0.3164 / max(Re, 1.0)**0.25
+        Re_tp = rho_m * vm * self.d / max(mu_tp, 1e-20)
+        f_tp = self._colebrook_white(Re_tp, self.eps / self.d)
 
-        dpdl_fric = f_m * rho_m * v_m**2 / (2.0 * GC * self.d)
-        dpdl_hyd  = rho_m * G / GC
+        if regime == "mist":
+            Re_g = rho_g * max(vsg, 1e-12) * self.d / max(mu_g, 1e-20)
+            f_tp = self._colebrook_white(Re_g, self.eps / self.d)
 
-        return max((dpdl_fric + dpdl_hyd) * PSF_TO_PSI, 0.0)
+        dpdl_fric = f_tp * rho_m * vm**2 / (2.0 * GC * self.d)
+        dpdl_elev = rho_m * G / GC
 
+        if include_acceleration:
+            Ek = rho_m * vm * vsg / (GC * max(p_psia * 144.0, 1e-20))
+            Ek = min(max(Ek, 0.0), 0.95)
+            total = (dpdl_fric + dpdl_elev) / (1.0 - Ek)
+        else:
+            Ek = 0.0
+            total = dpdl_fric + dpdl_elev
+
+        NGv = vsg * (rho_l / max(G * sigma_l, 1e-20))**0.25
+        Ns  = vm  * (rho_l / max(G * sigma_l, 1e-20))**0.25
+
+        return {
+            "q_l_ft3s": q_l,
+            "q_g_ft3s": q_g,
+            "vsl_fts": vsl,
+            "vsg_fts": vsg,
+            "vm_fts": vm,
+            "lambda_l": lam_l,
+            "rho_l": rho_l,
+            "rho_g": rho_g,
+            "rho_m": rho_m,
+            "mu_l_cp": mu_l_cp,
+            "mu_g_cp": mu_g_cp,
+            "HL": HL,
+            "regime": regime,
+            "NGv": NGv,
+            "Ns": Ns,
+            "Re_tp": Re_tp,
+            "f_tp": f_tp,
+            "Ek": Ek,
+            "dpdl_fric_psf_per_ft": dpdl_fric,
+            "dpdl_elev_psf_per_ft": dpdl_elev,
+            "dpdl_total_psi_per_ft": total * PSF_TO_PSI,
+        }
 # ===========================================================================
 # 2. Beggs & Brill (1973 / Payne correction 1979)
 # ===========================================================================
 
+# ===========================================================================
+# 2. Beggs & Brill (1973) with Payne et al. rough-pipe / holdup corrections
+# ===========================================================================
+
 class BeggsBrill:
     """
-    Beggs & Brill (1973) multiphase flow correlation, all inclinations.
+    Beggs & Brill (1973) multiphase flow correlation for all inclinations.
     Payne et al. (1979) holdup corrections applied.
 
     Parameters
     ----------
     fluid   : BlackOilFluid
     ID_in   : pipe inner diameter [in]
-    theta   : pipe inclination from horizontal [deg], positive = uphill
+    theta_deg : pipe inclination from horizontal [deg]
+                positive = uphill, negative = downhill
     eps_in  : absolute roughness [in]
     """
 
-    # Flow regime boundaries (from Table in Beggs & Brill 1973)
-    _L1 = staticmethod(lambda lam: 316.0  * max(lam, 1e-9)**0.302)
-    _L2 = staticmethod(lambda lam: 0.0009252 * max(lam, 1e-9)**(-2.4684))
-    _L3 = staticmethod(lambda lam: 0.1   * max(lam, 1e-9)**(-1.4516))
-    _L4 = staticmethod(lambda lam: 0.5   * max(lam, 1e-9)**(-6.738))
+    # Horizontal flow regime boundaries
+    _L1 = staticmethod(lambda lam: 316.0      * max(lam, 1e-12)**0.302)
+    _L2 = staticmethod(lambda lam: 0.0009252  * max(lam, 1e-12)**(-2.4684))
+    _L3 = staticmethod(lambda lam: 0.1        * max(lam, 1e-12)**(-1.4516))
+    _L4 = staticmethod(lambda lam: 0.5        * max(lam, 1e-12)**(-6.738))
 
-    def __init__(self, fluid: BlackOilFluid, ID_in: float,
-                 theta_deg: float = 0.0, eps_in: float = 0.001):
+    # Horizontal liquid holdup coefficients: EL(0) = a * lam^b / NFr^c
+    _HOLdup_COEFF = {
+        "segregated":   (0.980, 0.4846, 0.0868),
+        "intermittent": (0.845, 0.5351, 0.0173),
+        "distributed":  (1.065, 0.5824, 0.0609),
+    }
+
+    # Inclination correction coefficients:
+    # beta = (1-lam) * ln(d * lam^e * NLv^f * NFr^g)
+    # Note: distributed uses beta = 0  -> psi = 1
+    _INCL_COEFF_UPHILL = {
+        "segregated":   (0.0110, -3.7680,  3.5390, -1.6140),
+        "intermittent": (2.9600,  0.3050, -0.4473,  0.0978),
+        "distributed":  (0.0,     0.0,     0.0,     0.0),
+    }
+
+    _INCL_COEFF_DOWNHILL = {
+        "segregated":   (4.7000, -0.3692,  0.1244, -0.5056),
+        "intermittent": (4.7000, -0.3692,  0.1244, -0.5056),
+        "distributed":  (0.0,     0.0,     0.0,     0.0),
+    }
+
+    def __init__(
+        self,
+        fluid,
+        ID_in: float,
+        theta_deg: float = 0.0,
+        eps_in: float = 0.001,
+    ):
         self.fluid = fluid
-        self.d     = ID_in / 12.0
-        self.A     = math.pi * self.d**2 / 4.0
+        self.d = ID_in / 12.0
+        self.A = math.pi * self.d**2 / 4.0
+        self.theta_deg = theta_deg
         self.theta = math.radians(theta_deg)
         self.sin_t = math.sin(self.theta)
-        self.eps   = eps_in / 12.0
+        self.eps = eps_in / 12.0
 
-    # -- gas properties: delegate to fluid (uses Hall-Yarborough z) ---------
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
+
     def _gas_density(self, p_psia: float) -> float:
         return self.fluid.gas_density_lbmft3(p_psia)
 
     def _gas_viscosity_cp(self, p_psia: float) -> float:
         return self.fluid.gas_viscosity_cp(p_psia)
 
-    # -- holdup at horizontal (θ=0) -----------------------------------------
-    def _EL_horizontal(self, lam: float, NFr: float) -> float:
+    @staticmethod
+    def _safe_pow(x: float, p: float, floor: float = 1e-12) -> float:
+        return max(x, floor) ** p
+
+    @staticmethod
+    def _colebrook_white(Re: float, eps_rel: float) -> float:
+        if Re < 2100.0:
+            return 64.0 / max(Re, 1.0)
+
+        # Swamee-Jain initial guess
+        f = 0.25 / (math.log10(eps_rel / 3.7 + 5.74 / Re**0.9) ** 2)
+
+        for _ in range(12):
+            rhs = -2.0 * math.log10(eps_rel / 3.7 + 2.51 / (Re * math.sqrt(f)))
+            f_new = 1.0 / (rhs * rhs)
+            if abs(f_new - f) < 1e-10:
+                return f_new
+            f = f_new
+
+        return f
+
+    @staticmethod
+    def _friction_ratio_s(y: float) -> float:
         """
-        Beggs-Brill horizontal holdup EL(0).
-        Uses flow-regime-based coefficients.
+        Beggs & Brill friction-factor ratio function.
+        """
+        y = max(y, 1e-12)
+
+        if 1.0 < y < 1.2:
+            return math.log(2.2 * y - 1.2)
+
+        ln_y = math.log(y)
+        denom = (
+            -0.0523
+            + 3.182 * ln_y
+            - 0.8725 * ln_y**2
+            + 0.01853 * ln_y**4
+        )
+
+        # safeguard
+        if abs(denom) < 1e-12:
+            return 0.0
+
+        return ln_y / denom
+
+    def _flow_regime(self, lam: float, NFr: float) -> str:
+        """
+        Determine horizontal Beggs-Brill flow regime.
         """
         L1 = self._L1(lam)
         L2 = self._L2(lam)
         L3 = self._L3(lam)
         L4 = self._L4(lam)
 
-        # Determine flow regime
-        if lam < 0.01 and NFr < L1:
-            regime = 'segregated'
-        elif lam >= 0.01 and NFr < L2:
-            regime = 'segregated'
-        elif lam >= 0.01 and L2 <= NFr <= L3:
-            regime = 'transition'
-        elif (0.01 <= lam < 0.4) and (L3 < NFr <= L1):
-            regime = 'intermittent'
-        elif lam >= 0.4 and (L3 < NFr <= L4):
-            regime = 'intermittent'
-        else:
-            regime = 'distributed'
+        if (lam < 0.01 and NFr < L1) or (lam >= 0.01 and NFr < L2):
+            return "segregated"
 
-        # Coefficient table (Beggs & Brill 1973, Table 2)
-        coeff = {
-            'segregated':   (0.980,  0.4846,  0.0868),
-            'intermittent': (0.845,  0.5351,  0.0173),
-            'distributed':  (1.065,  0.5824,  0.0609),
-        }
+        if lam >= 0.01 and L2 <= NFr <= L3:
+            return "transition"
 
-        if regime == 'transition':
-            # Interpolate between segregated and intermittent
-            A_t = (L3 - NFr) / max(L3 - L2, 1e-12)
-            B_t = 1.0 - A_t
-            EL_seg = self._EL_regime(lam, NFr, *coeff['segregated'])
-            EL_int = self._EL_regime(lam, NFr, *coeff['intermittent'])
-            return A_t * EL_seg + B_t * EL_int
-        else:
-            return self._EL_regime(lam, NFr, *coeff[regime])
+        if ((0.01 <= lam < 0.4) and (L3 < NFr <= L1)) or ((lam >= 0.4) and (L3 < NFr <= L4)):
+            return "intermittent"
+
+        return "distributed"
 
     @staticmethod
-    def _EL_regime(lam: float, NFr: float, a: float, b: float, c: float) -> float:
-        EL = a * lam**b / NFr**c
-        return min(max(EL, lam), 1.0)
+    def _EL0_regime(lam: float, NFr: float, a: float, b: float, c: float) -> float:
+        EL0 = a * max(lam, 1e-12)**b / max(NFr, 1e-12)**c
+        return min(max(EL0, lam), 1.0)
 
-    # -- inclination correction (Payne 1979) --------------------------------
-    def _inclination_factor(self, lam: float, NFr: float,
-                            NLv: float, EL0: float) -> float:
+    def _EL0(self, lam: float, NFr: float, regime: str) -> float:
+        if regime == "transition":
+            raise ValueError("Transition EL0 should be handled by interpolation.")
+        a, b, c = self._HOLdup_COEFF[regime]
+        return self._EL0_regime(lam, NFr, a, b, c)
+
+    def _inclination_multiplier(self, lam: float, NFr: float, NLv: float, regime: str) -> float:
         """
-        C factor for inclination.  Payne et al. (1979) correction.
+        psi = 1 + beta * (sin(1.8θ) - (1/3)sin^3(1.8θ))
+        beta = (1-lam) * ln(d * lam^e * NLv^f * NFr^g)
         """
-        theta = self.theta
-        if abs(math.degrees(theta)) < 0.1:
+        if abs(self.theta_deg) < 1e-10:
             return 1.0
 
-        if theta > 0:   # uphill
-            d1, d2, d3, d4 = 0.011, -3.768, 3.539, -1.614
-        else:           # downhill
-            d1, d2, d3, d4 = 4.70, -0.3692, 0.1244, -0.5056
+        if regime == "distributed":
+            return 1.0
 
-        C = max(0.0, (1.0 - lam) * math.log(
-            max(abs(d1 * max(lam, 1e-9)**d2 * max(NFr, 1e-9)**d3 * max(NLv, 1e-9)**d4), 1e-10)))
-        psi_incl = 1.0 + C * (math.sin(1.8 * theta) - math.sin(1.8 * theta)**3 / 3.0)
-        return max(psi_incl, 0.0)
+        coeffs = self._INCL_COEFF_UPHILL if self.theta > 0.0 else self._INCL_COEFF_DOWNHILL
+        d, e, f, g = coeffs[regime]
 
-    def dpdl_psi_ft(self, q_total_stbd: float, p_psia: float) -> float:
+        arg = (
+            d
+            * self._safe_pow(lam, e)
+            * self._safe_pow(NLv, f)
+            * self._safe_pow(NFr, g)
+        )
+
+        beta = (1.0 - lam) * math.log(max(arg, 1e-12))
+        trig = math.sin(1.8 * self.theta) - (math.sin(1.8 * self.theta) ** 3) / 3.0
+        psi = 1.0 + beta * trig
+
+        return max(psi, 0.0)
+
+    def _payne_correction(self, EL: float) -> float:
         """
-        Total dP/dL [psi/ft] for multiphase flow at given inclination.
+        Payne et al. correction.
+        """
+        if self.theta > 0.0:
+            EL *= 0.924
+        elif self.theta < 0.0:
+            EL *= 0.685
+        return EL
+
+    def _liquid_holdup(self, lam: float, NFr: float, NLv: float) -> tuple[float, str]:
+        """
+        Returns inclined liquid holdup EL and regime.
+        """
+        regime = self._flow_regime(lam, NFr)
+
+        if regime == "transition":
+            L2 = self._L2(lam)
+            L3 = self._L3(lam)
+
+            A = (L3 - NFr) / max(L3 - L2, 1e-12)
+            B = 1.0 - A
+
+            EL0_seg = self._EL0(lam, NFr, "segregated")
+            EL0_int = self._EL0(lam, NFr, "intermittent")
+
+            psi_seg = self._inclination_multiplier(lam, NFr, NLv, "segregated")
+            psi_int = self._inclination_multiplier(lam, NFr, NLv, "intermittent")
+
+            EL_seg = min(max(self._payne_correction(EL0_seg * psi_seg), lam), 1.0)
+            EL_int = min(max(self._payne_correction(EL0_int * psi_int), lam), 1.0)
+
+            EL = A * EL_seg + B * EL_int
+            EL = min(max(EL, lam), 1.0)
+            return EL, regime
+
+        EL0 = self._EL0(lam, NFr, regime)
+        psi = self._inclination_multiplier(lam, NFr, NLv, regime)
+        EL = EL0 * psi
+        EL = self._payne_correction(EL)
+        EL = min(max(EL, lam), 1.0)
+        return EL, regime
+
+    # ------------------------------------------------------------------
+    # Main calculation
+    # ------------------------------------------------------------------
+
+    def dpdl_psi_ft(self, q_total_stbd: float, p_psia: float, include_acceleration: bool = True) -> float:
+        """
+        Total pressure gradient [psi/ft].
+
+        Parameters
+        ----------
+        q_total_stbd : total surface liquid rate [STB/D]
+        p_psia       : flowing pressure [psia]
+        include_acceleration : whether to include Beggs-Brill acceleration correction
+
+        Returns
+        -------
+        dP/dL [psi/ft]
         """
         fluid = self.fluid
 
-        q_l   = fluid.liquid_rate_ft3s(q_total_stbd, p_psia)
-        rho_l = fluid.mixture_density_lbmft3(p_psia)
-        mu_l  = cp_to_lbmfts(fluid.mixture_viscosity_cp(p_psia))
+        # -------------------------
+        # Liquid properties / rate
+        # -------------------------
+        q_l = fluid.liquid_rate_ft3s(q_total_stbd, p_psia)   # ft3/s
+        rho_l = fluid.mixture_density_lbmft3(p_psia)         # lbm/ft3
+        mu_l = cp_to_lbmfts(fluid.mixture_viscosity_cp(p_psia))
 
-        # Gas
-        Rs_sc    = fluid.solution_gor(p_psia)
+        # -------------------------
+        # Gas properties / rate
+        # -------------------------
+        Rs_sc = fluid.solution_gor(p_psia)
         free_gor = max(fluid.gor_scf_stb - Rs_sc, 0.0)
+
         q_o_stbd = q_total_stbd * (1.0 - fluid.wc)
-        # Use Hall-Yarborough z-factor (from fluid) instead of fixed z=0.85
         Bg_ft3_scf = fluid.gas_fvf_ft3_scf(p_psia)
-        q_g = q_o_stbd * free_gor * Bg_ft3_scf / 86400.0 * 5.614583
+
+        # scf/day * ft3/scf / 86400 = ft3/s
+        q_g = q_o_stbd * free_gor * Bg_ft3_scf / 86400.0
 
         rho_g = self._gas_density(p_psia)
-        mu_g  = cp_to_lbmfts(self._gas_viscosity_cp(p_psia))
+        mu_g = cp_to_lbmfts(self._gas_viscosity_cp(p_psia))
+
+        # -------------------------
+        # Superficial velocities
+        # -------------------------
+        vsl, vsg, vm, lam_l = _superficial_velocities(q_l, q_g, self.A)
+
+        # Beggs-Brill groups
+        NFr = vm**2 / (G * self.d)
+
+        # Liquid velocity number
+        # This assumes sigma_l is in dynes/cm and field-units style use in your codebase.
+        sigma_l = 30.0
+        NLv = vsl * (rho_l / max(G * sigma_l, 1e-12))**0.25
+
+        # -------------------------
+        # Liquid holdup
+        # -------------------------
+        EL, regime = self._liquid_holdup(lam_l, NFr, NLv)
+
+        # -------------------------
+        # Mixture properties
+        # -------------------------
+        rho_m = rho_l * EL + rho_g * (1.0 - EL)                  # slip mixture density
+        rho_ns = rho_l * lam_l + rho_g * (1.0 - lam_l)          # no-slip density
+
+        # no-slip viscosity for Reynolds number
+        mu_ns = math.exp(
+            lam_l * math.log(max(mu_l, 1e-30))
+            + (1.0 - lam_l) * math.log(max(mu_g, 1e-30))
+        )
+
+        # -------------------------
+        # Friction factor
+        # -------------------------
+        Re = rho_ns * vm * self.d / max(mu_ns, 1e-30)
+        eps_rel = self.eps / self.d
+        f_ns = self._colebrook_white(Re, eps_rel)
+
+        y = lam_l / max(EL, 1e-12)**2
+        s = self._friction_ratio_s(y)
+        f_tp = f_ns * math.exp(s)
+
+        # -------------------------
+        # Pressure gradient terms
+        # -------------------------
+        dpdl_fric = f_tp * rho_ns * vm**2 / (2.0 * GC * self.d)   # lbf/ft3
+        dpdl_elev = rho_m * G * self.sin_t / GC                   # lbf/ft3
+
+        if include_acceleration:
+            Ek = rho_m * vm * vsg / (GC * max(p_psia * 144.0, 1e-12))
+            Ek = min(max(Ek, 0.0), 0.95)
+            total_psf_per_ft = (dpdl_fric + dpdl_elev) / (1.0 - Ek)
+        else:
+            total_psf_per_ft = dpdl_fric + dpdl_elev
+
+        return total_psf_per_ft * PSF_TO_PSI
+
+    # ------------------------------------------------------------------
+    # Useful debug hook
+    # ------------------------------------------------------------------
+
+    def details(self, q_total_stbd: float, p_psia: float, include_acceleration: bool = True) -> dict:
+        """
+        Returns intermediate variables for debugging / validation.
+        """
+        fluid = self.fluid
+
+        q_l = fluid.liquid_rate_ft3s(q_total_stbd, p_psia)
+        rho_l = fluid.mixture_density_lbmft3(p_psia)
+        mu_l = cp_to_lbmfts(fluid.mixture_viscosity_cp(p_psia))
+
+        Rs_sc = fluid.solution_gor(p_psia)
+        free_gor = max(fluid.gor_scf_stb - Rs_sc, 0.0)
+        q_o_stbd = q_total_stbd * (1.0 - fluid.wc)
+        Bg_ft3_scf = fluid.gas_fvf_ft3_scf(p_psia)
+        q_g = q_o_stbd * free_gor * Bg_ft3_scf / 86400.0
+
+        rho_g = self._gas_density(p_psia)
+        mu_g = cp_to_lbmfts(self._gas_viscosity_cp(p_psia))
 
         vsl, vsg, vm, lam_l = _superficial_velocities(q_l, q_g, self.A)
 
-        # Froude number
-        NFr  = vm**2 / (G * self.d)
-        # Liquid velocity number
-        sigma_l = 30.0  # dynes/cm
-        NLv = vsl * (rho_l / (G * sigma_l))**0.25
+        NFr = vm**2 / (G * self.d)
+        sigma_l = 30.0
+        NLv = vsl * (rho_l / max(G * sigma_l, 1e-12))**0.25
 
-        # Horizontal holdup
-        EL0 = self._EL_horizontal(lam_l, NFr)
+        EL, regime = self._liquid_holdup(lam_l, NFr, NLv)
 
-        # Inclination correction
-        beta = self._inclination_factor(lam_l, NFr, NLv, EL0)
-        EL   = EL0 * beta
-        EL   = min(max(EL, lam_l), 1.0)
-
-        # Payne correction for upward flow (multiply EL by 0.924 for uphill)
-        if self.theta > 0:
-            EL = min(EL * 0.924, 1.0)
-        elif self.theta < 0:
-            EL = min(EL * 0.685, 1.0)
-
-        # Mixture density
-        rho_m  = rho_l * EL + rho_g * (1.0 - EL)
-        # No-slip mixture density (for friction)
+        rho_m = rho_l * EL + rho_g * (1.0 - EL)
         rho_ns = rho_l * lam_l + rho_g * (1.0 - lam_l)
 
-        # Mixture viscosity (no-slip, for Re) – log-weighted, safe
-        mu_m  = math.exp(lam_l * math.log(max(mu_l, 1e-20))
-                         + (1.0 - lam_l) * math.log(max(mu_g, 1e-20)))
+        mu_ns = math.exp(
+            lam_l * math.log(max(mu_l, 1e-30))
+            + (1.0 - lam_l) * math.log(max(mu_g, 1e-30))
+        )
 
-        # Reynolds & friction
-        Re = rho_ns * vm * self.d / max(mu_m, 1e-20)
+        Re = rho_ns * vm * self.d / max(mu_ns, 1e-30)
         eps_rel = self.eps / self.d
+        f_ns = self._colebrook_white(Re, eps_rel)
 
-        if Re < 2100:
-            f_ns = 64.0 / max(Re, 1.0)
-        else:
-            # Colebrook-White
-            def colebrook(f_):
-                return -2.0 * math.log10(eps_rel / 3.7 + 2.51 / (Re * math.sqrt(f_))) - 1.0 / math.sqrt(f_)
-            # Initial Swamee-Jain
-            f_ns = (0.25 / (math.log10(eps_rel / 3.7 + 5.74 / Re**0.9))**2)
-            for _ in range(5):
-                f_ns = (1.0 / (-2.0 * math.log10(eps_rel / 3.7 + 2.51 / (Re * math.sqrt(f_ns)))))**2
+        y = lam_l / max(EL, 1e-12)**2
+        s = self._friction_ratio_s(y)
+        f_tp = f_ns * math.exp(s)
 
-        # B&B friction factor ratio (y-function)
-        y = lam_l / max(EL, 1e-6)**2
-        if 1.0 < y < 1.2:
-            s = math.log(2.2 * y - 1.2)
-        else:
-            ln_y = math.log(max(y, 1e-6))
-            s = ln_y / (-0.0523 + 3.182 * ln_y - 0.8725 * ln_y**2 + 0.01853 * ln_y**4)
-        f_ratio = math.exp(s)
-        f_tp    = f_ns * min(f_ratio, 2.5)
-
-        # Pressure gradient components
         dpdl_fric = f_tp * rho_ns * vm**2 / (2.0 * GC * self.d)
-        dpdl_hyd  = rho_m * G * self.sin_t / GC
-        dpdl_acc  = 0.0   # acceleration term (negligible for liquid-dominated)
+        dpdl_elev = rho_m * G * self.sin_t / GC
 
-        total_psf = dpdl_fric + dpdl_hyd + dpdl_acc
-        return total_psf * PSF_TO_PSI
+        if include_acceleration:
+            Ek = rho_m * vm * vsg / (GC * max(p_psia * 144.0, 1e-12))
+            Ek = min(max(Ek, 0.0), 0.95)
+            total = (dpdl_fric + dpdl_elev) / (1.0 - Ek)
+        else:
+            Ek = 0.0
+            total = dpdl_fric + dpdl_elev
+
+        return {
+            "q_l_ft3s": q_l,
+            "q_g_ft3s": q_g,
+            "vsl_fts": vsl,
+            "vsg_fts": vsg,
+            "vm_fts": vm,
+            "lambda_l": lam_l,
+            "NFr": NFr,
+            "NLv": NLv,
+            "regime": regime,
+            "EL": EL,
+            "rho_l": rho_l,
+            "rho_g": rho_g,
+            "rho_m": rho_m,
+            "rho_ns": rho_ns,
+            "mu_l_lbmfts": mu_l,
+            "mu_g_lbmfts": mu_g,
+            "mu_ns_lbmfts": mu_ns,
+            "Re": Re,
+            "f_ns": f_ns,
+            "y": y,
+            "s": s,
+            "f_tp": f_tp,
+            "Ek": Ek,
+            "dpdl_fric_psf_per_ft": dpdl_fric,
+            "dpdl_elev_psf_per_ft": dpdl_elev,
+            "dpdl_total_psi_per_ft": total * PSF_TO_PSI,
+        }
 
 
 # ===========================================================================
