@@ -2,7 +2,7 @@
 %  PROCEDURE  (sections/03_procedure.tex)
 % =============================================================
 
-\chapter{Procedure}
+\chapter{Procedure and Results}
 
 % Describe WHAT YOU DID in enough detail that someone else could
 % replicate the work. Use subsections to organise distinct phases
@@ -130,45 +130,7 @@ Using Pipesim was used to find the Wellhead Pressure (WHP) for different water c
     \label{fig:well1_whp_x_gas_lift_and_water_cut}
 \end{figure}    
 
-\subsection{Production Profile and Short Economic Analysis}
 
-In this section the analysis was made just for Well 1. Because the production forecast predicts a water cut improvement, the system analysis should be made for different water cuts, since the flow conditions and necessary gas-lift rate will change with the water cut.
-The water cut forecast for Well 1is shown in Figure \ref{fig:water_cut_forecast}. The water cut is in function of cumulative oil production, starting at 5\% and improving to 95\% at the end of the forecast period. 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\textwidth]{figs/water_cut_forecast.png}
-    \caption{Water Cut Forecast for Well 1}
-    \label{fig:water_cut_forecast}
-\end{figure}
-For the production forecast, it was assumed that the well will produce at the maximum allowed flow rate for all water cuts, which is 6428.57 STB/d. The production profile for Well 1 is shown in Figure \ref{fig:production_profile}.
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\textwidth]{figs/production_profile.png}
-    \caption{Production Profile for Well 1}
-    \label{fig:production_profile}
-\end{figure}
-For the required gas-lift rate, it was used the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut} to find the necessary gas-lift rate for each water cut. The gas-lift rate profile for Well 1 is shown in Figure \ref{fig:gas_lift_profile}. For values that are not in the original plot, it was used linear interpolation to find the necessary gas-lift rate. 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics[width=0.7\textwidth]{figs/gas_lift_profile.png}
-    \caption{Gas-Lift Rate Profile for Well 1}
-    \label{fig:gas_lift_profile}
-\end{figure}
-It was required to verify the network operating conditions for different water cuts, 5\%, 40\% and 80\%. For each of these water cuts, the necessary gas-lift rate was found using the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut}. The results are shown in Table \ref{tab:network_conditions}.
-\begin{table}[htbp]
-    \centering
-    \caption{Network Operating Conditions for Different Water Cuts}
-    \label{tab:network_conditions}
-    \begin{tabular}{l c }
-        \toprule
-        \textbf{Water Cut} & \textbf{Gas-Lift Rate (MMscf/d)} \\
-        \midrule
-        5\%     & 0.00   \\
-        40\%    & 0.69   \\
-        80\%    & 1.40   \\
-        \bottomrule
-    \end{tabular}
-\end{table}
 % ----- Section 2.2 -------------------------------------------
 \clearpage
 \subsection{Pipeline Design}
@@ -388,8 +350,475 @@ for the pipeline. This ensures that even under the most thermally demanding
 condition---low watercut and reduced well count---the fluid temperature at
 the LOP exceeds the WAT of 100\textdegree F, preventing wax deposition and
 maintaining flow assurance throughout the field life.
+\subsection{Production Profile and Short Economic Analysis}
 
-\lipsum[6] % Replace with description of second method / phase
+In this section the analysis was made just for Well 1. Because the production forecast predicts a water cut improvement, the system analysis should be made for different water cuts, since the flow conditions and necessary gas-lift rate will change with the water cut.
+The water cut forecast for Well 1is shown in Figure \ref{fig:water_cut_forecast}. The water cut is in function of cumulative oil production, starting at 2\% and improving to 95\% at the end of the forecast period. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/water_cut_forecast.png}
+    \caption{Water Cut Forecast for Well 1}
+    \label{fig:water_cut_forecast}
+\end{figure}
+For the production forecast, it was assumed that the well will produce at the maximum allowed flow rate for all water cuts, which is 6428.57 STB/d. The production profile for Well 1 is shown in Figure \ref{fig:production_profile}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/production_profile.png}
+    \caption{Production Profile for Well 1}
+    \label{fig:production_profile}
+\end{figure}
+For the required gas-lift rate, it was used the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut} to find the necessary gas-lift rate for each water cut. The gas-lift rate profile for Well 1 is shown in Figure \ref{fig:gas_lift_profile}. For values that are not in the original plot, it was used linear interpolation to find the necessary gas-lift rate. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/gas_lift_profile.png}
+    \caption{Gas-Lift Rate Profile for Well 1}
+    \label{fig:gas_lift_profile}
+\end{figure}
+It was required to verify the network operating conditions for different water cuts, 5\%, 40\% and 80\%. For each of these water cuts, the necessary gas-lift rate was found using the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut}. The results are shown in Table \ref{tab:network_conditions}.
+\begin{table}[htbp]
+    \centering
+    \caption{Network Operating Conditions for Different Water Cuts}
+    \label{tab:network_conditions}
+    \begin{tabular}{l c }
+        \toprule
+        \textbf{Water Cut} & \textbf{Gas-Lift Rate (MMscf/d)} \\
+        \midrule
+        5\%     & 0.00   \\
+        40\%    & 0.69   \\
+        80\%    & 1.40   \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+A network was created in Pipesim to evaluate each operating condition. The network consists of the 7 production wells and three manifolds. The total production is collect in the manifold M2. 
+The Figure~\ref{fig:network_configuration} shows the network configuration. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/network_config.png}
+    \caption{Network Configuration for the 7 Production Wells}
+    \label{fig:network_configuration}
+\end{figure}
+
+The network was evaluated for 7 and 4 operating wells. It was observed that only with the 4 wells operating, it is not possible to achieve the maximum flow rate and maintain the minimum operating pressure. So, for the cases where the number of operating
+wells is 4, the boundary condition for the sink was changed to a total flow rate equal to 25715 STB/d (this is equivalent to the combined maximum flow rate of the 4 wells). This way, the minimum operating pressure is achieved for all water cut scenarios.
+
+The figure Figure~\ref{fig:network_pressure} shows the pressure observed in the manifold M2 for different water cuts and number of operating wells. The same analyis is made for the temperature, and the results are shown in Figure~\ref{fig:network_temperature}.
+From the results, it is observed that the pressure varies but it is always above the minimum operating pressure of 1100 psia. The temperature is always low for the 4 wells operating scenario, but it is always above 170 $^\circ$F in all cases. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/network_pressure_behaviour.png}
+    \caption{Manifold M2 Pressure vs. Water Cut and Number of Operating Wells}
+    \label{fig:network_pressure}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/network_temperature_behaviour.png}
+    \caption{Manifold M2 Temperature vs. Water Cut and Number of Operating Wells}
+    \label{fig:network_temperature}
+\end{figure}
+
+\subsection*{Economic Analysis}
+
+For the short economic analysis it was considered the production forecast for Well 1, presented in Figure~\ref{fig:production_profile}, and the necessary gas-lift rate, presented in Figure~\ref{fig:gas_lift_profile} and the necessary gas-lift pressure 
+shown in Figure~\ref{fig:well1_whp_x_gas_lift_and_water_cut}. It was assumed two oil sales price: 50 \$/BBL and 30 \$/BBL. The initially assumed costs 
+for water treatment and gas-lift injection were 1 $\$/\text{STB}$ and 1 $\$/\text{MMScf} \times \text{psi}$, respectively. But it was observed that using these
+costs there was no water cut values that makes the production not economic viable. For this reason, a sensitivity analysis was made for the
+water treatment cost and the gas-lift injection cost. The results are shown in Figure~\ref{fig:break_even_50} and Figure~\ref{fig:break_even_30} for the oil price of 50 \$/BBL and 30 \$/BBL, respectively.
+Using the original costs, the break-even water cut is above 95\% for both oil prices. So, for the purpose of the comparison of both scenarios, 
+it was decided to use a water treatment cost of 5 $\$/\text{STB}$ and a gas-lift injection cost of 5 $\$/\text{MMScf} \times \text{psi}$, which gives a break-even water cut of around 86\% for the oil price of 50 \$/BBL and around 78\% for the oil price of 30 \$/BBL.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/break_even_50.png}
+    \caption{Break-even Water Cut for Different Water Treatment and Gas-Lift Costs (Oil Price = 50 \$/BBL)}
+    \label{fig:break_even_50}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/break_even_30.png}
+    \caption{Break-even Water Cut for Different Water Treatment and Gas-Lift Costs (Oil Price = 30 \$/BBL)}
+    \label{fig:break_even_30}
+\end{figure}
+
+\subsection*{Optimization of Operating Conditions}
+
+It is possible to optimize the operating conditions for each water cut scenario to maximize the net profit. The net profit is given by the difference between the revenue and the costs. The revenue is given by the product of the oil sale price and the oil production, while the costs are given by the sum of the water treatment cost and the gas-lift injection cost.
+The optimization process was made using a simple algorithm that evaluates the net profit for different gas-lift rates. This way, the well will produce at a flow rate less than the maximum allowed, but it will be more profitable. 
+The implemented algorithm is shown in the following pseudocode. This process was applied for the two oil price scenarios and the same water treatment and gas-lift injection costs used in the previous sensitivity analysis. 
+
+\begin{algorithm}
+\caption{Optimization of Operating Conditions}
+\begin{algorithmic}[1]
+% \State Initialize water cut scenarios and corresponding production profiles
+\For{each day in the production forecast}
+    \State Get current water cut and corresponding production profile
+    \State Initialize variables to store optimal gas-lift rate and maximum net profit
+    \For{each gas-lift rate in the defined range}
+        \State Calculate oil production based on current water cut and gas-lift rate
+        \State Calculate revenue = oil sale price $\times$ oil production
+        \State Calculate costs = water treatment cost + gas-lift injection cost
+        \State Calculate net profit = revenue - costs
+        \If{net profit > maximum net profit}
+            \State Update maximum net profit and optimal gas-lift rate
+        \EndIf
+    \EndFor
+    \State Store optimal gas-lift rate for current day
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{Optimization for 50 \$/BBL Oil Price}
+
+The production cost history and water cut for is shown in Figure~\ref{cost_history_50}, showing the number of productions days
+where the production costs exceed the oil sale price. The optimal gas-lift rate for each day is shown in Figure~\ref{optimal_gas_lift_50}.
+The new forecast production profile is shown in Figure~\ref{optimized_production_50}, and the comparison between the original and optimized oil production is shown in Figure~\ref{production_comparison_50}.
+For the non optimized case, the limit days in production is reached at day 14512 and for the optimized case the economic production is achieved for all 
+the forecast period. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/cost_history_50.png}
+    \caption{Production Cost History and Water Cut for 50 \$/BBL Oil Price}
+    \label{cost_history_50}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/optmized_gas_lift_50.png}
+    \caption{Optimal Gas-Lift Rate for 50 \$/BBL Oil Price}
+    \label{optimal_gas_lift_50}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/optmized_production_50.png}
+    \caption{Optimized Production Profile for 50 \$/BBL Oil Price}
+    \label{optimized_production_50}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/oil_production_comparison_50.png}
+    \caption{Comparison of Original and Optimized Production Profiles for 50 \$/BBL Oil Price}
+    \label{production_comparison_50}
+\end{figure}
+
+\subsection*{Optimization for 30 \$/BBL Oil Price}
+The production cost history and water cut for is shown in Figure~\ref{cost_history_30}, showing the number of productions days
+where the production costs exceed the oil sale price. The optimal gas-lift rate for each day is shown in Figure~\ref{optimal_gas_lift_30}.
+The new forecast production profile is shown in Figure~\ref{optimized_production_30}, and the comparison between the original and optimized oil production is shown in Figure~\ref{production_comparison_30}.
+For the non optimized case, the limit days in production is reached at day 9163 and for the optimized case the limit days in production is reached at day 19178. So the increment in production days
+is 10015 days, which is a significant improvement.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/cost_history_30.png}
+    \caption{Production Cost History and Water Cut for 30 \$/BBL Oil Price}
+    \label{cost_history_30}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/optmized_gas_lift_30.png}
+    \caption{Optimal Gas-Lift Rate for 30 \$/BBL Oil Price}
+    \label{optimal_gas_lift_30}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/optmized_production_30.png}
+    \caption{Optimized Production Profile for 30 \$/BBL Oil Price}
+    \label{optimized_production_30}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/oil_production_comparison_30.png}
+    \caption{Comparison of Original and Optimized Production Profiles for 30 \$/BBL Oil Price}
+    \label{production_comparison_30}
+\end{figure}
 
 
 
+
+
+
+% ----- Subsection 2 -------------------------------------------
+\section{Part 2}
+\label{sec:proc_phase2}
+
+
+In this section will be discused the implementation of network simulator and the results obtained from the simulations.
+The code was implemented in Python using Claude.ai as conding assistant. It was decided to make the subsurface and surface network in
+a integrated way, so the network simulator will be able to evaluate the impact of the surface network on the subsurface and vice versa.
+
+\section{Code Structure and Module Interaction}
+
+The network simulator is organized as a set of modular Python files, where each file has a well-defined responsibility in the workflow. The code is divided into six main layers: input handling, fluid-property evaluation, multiphase pressure-drop models, physical network components, network solution, and visualization. This structure makes the simulator easier to validate, extend, and maintain.
+
+\subsection{Overall Organization}
+
+The simulator is centered on the idea that each physical object in the production system is represented explicitly in code. Fluid properties are evaluated first, then attached to physical components such as wells and flowlines. These components are assembled into a network graph, and the solver iterates on rates and pressures until the boundary conditions are satisfied. Finally, the results are post-processed and visualized.
+
+\subsection*{\texttt{fluid\_correlations.py}}
+
+This module provides the fluid-property model used throughout the simulator. Its main class is \texttt{BlackOilFluid}, which stores the fluid description and computes all required black-oil PVT and transport properties. In particular, it includes:
+
+\begin{itemize}
+    \item solution gas--oil ratio, bubble-point pressure, and oil formation volume factor;
+    \item oil, gas, and water densities and viscosities;
+    \item gas compressibility factor using the Hall--Yarborough correlation;
+    \item in-situ liquid and gas volumetric rates needed by the flow correlations.
+\end{itemize}
+
+Therefore, this module acts as the thermodynamic and transport-property foundation for all pressure-gradient calculations.
+
+\subsection*{\texttt{multiphase\_correlations.py}}
+
+This module contains the pressure-gradient models used by the simulator. From the calls in the rest of the code, its role is to provide:
+
+\begin{itemize}
+    \item vertical-flow calculations through the Hagedorn--Brown correlation;
+    \item inclined-flow calculations through the Beggs--Brill correlation;
+    \item a dispatcher function, \texttt{get\_correlation(...)}, that chooses the appropriate correlation based on inclination angle, pipe diameter, fluid object, and roughness.
+\end{itemize}
+
+In the present architecture, this file is the hydraulic core of the simulator. It converts local rate, pressure, and geometry information into pressure gradients.
+
+\subsection*{\texttt{survey\_reader.py}}
+
+This module is responsible for loading well trajectory data from external CSV files. It supports multiple survey formats, such as:
+
+\begin{itemize}
+    \item measured depth and TVD only;
+    \item measured depth and inclination;
+    \item measured depth, TVD, and inclination together.
+\end{itemize}
+
+If one quantity is missing, the module reconstructs it using minimum-curvature-based inverse or forward calculations. The output is a list of \texttt{SurveyPoint} objects, which can be passed directly to the well model. This module isolates data ingestion from the rest of the simulator and makes the wellbore workflow independent of the original survey file format.
+
+\subsection*{\texttt{network\_components.py}}
+
+This module defines the physical components of the production network. It contains the objects that represent both the topology and the hydraulic elements of the system.
+
+\subsubsection*{Node classes}
+
+The code defines generic and specialized nodes such as:
+
+\begin{itemize}
+    \item \texttt{Node}: general network junction;
+    \item \texttt{ReservoirNode}: fixed-pressure upstream boundary;
+    \item \texttt{SeparatorNode}: fixed-pressure downstream sink;
+    \item \texttt{FixedRateSink}: downstream sink constrained by total liquid rate;
+    \item \texttt{ManifoldNode}: junction with no pressure drop.
+\end{itemize}
+
+These classes provide the boundary conditions and connection points for the network.
+
+\subsubsection*{Well trajectory and well model}
+
+The module also defines:
+
+\begin{itemize}
+    \item \texttt{SurveyPoint}: one survey station;
+    \item \texttt{WellSegment}: one interval between survey stations;
+    \item \texttt{Well}: the complete wellbore model.
+\end{itemize}
+
+The \texttt{WellSegment} class computes the true vertical depth increment using the minimum-curvature method. The \texttt{Well} class then chains all segments together to construct the total measured depth and total TVD of the well.
+
+In addition, the \texttt{Well} class contains the inflow model. It automatically switches between a linear productivity-index relation and a Vogel-type inflow relation, depending on reservoir pressure relative to bubble-point pressure. It can evaluate either:
+\[
+q = f(p_{wf})
+\qquad \text{or} \qquad
+p_{wf} = f(q),
+\]
+which allows the well to be coupled directly to the tubing-pressure calculations.
+
+\subsubsection*{Pressure-drop elements}
+
+For the outflow system, the module defines:
+
+\begin{itemize}
+    \item \texttt{FlowlinePipe}: a surface or subsea pipe represented by an elevation profile;
+    \item \texttt{Choke}: a pressure-drop element using either a Gilbert-type or \(C_v\)-based model;
+    \item \texttt{Manifold}: a zero-pressure-drop junction object.
+\end{itemize}
+
+The \texttt{FlowlinePipe} object discretizes the pipe according to the supplied elevation profile and marches pressure from inlet to outlet. For each segment, it calls \texttt{get\_correlation(...)} to select the hydraulic correlation according to inclination. Similarly, the \texttt{Well} object marches pressure from bottom hole to wellhead, subdividing the survey into smaller intervals for improved accuracy.
+
+\subsection*{\texttt{network\_solver.py}}
+
+This module defines the global solver through the \texttt{ProductionNetwork} class. It is responsible for assembling all components into a connected directed tree and computing the operating state of the full network.
+
+\subsubsection*{Graph construction}
+
+The solver stores all nodes, wells, flowlines, chokes, and manifolds, then converts them into a graph representation with:
+
+\begin{itemize}
+    \item downstream connectivity;
+    \item upstream connectivity;
+    \item an edge map that links node pairs to the corresponding pipe or choke object.
+\end{itemize}
+
+This graph representation is used both for rate accumulation and for pressure marching.
+
+\subsubsection*{Wellhead-performance logic}
+
+A key feature of the solver is that it recognizes that the wellhead-pressure curve \(WHP(q)\) can be non-monotonic in multiphase flow. At low rate, the heavy liquid column causes a low wellhead pressure; at intermediate rate, gas lightens the column and the wellhead pressure rises; at still higher rate, friction dominates and the wellhead pressure decreases again. The solver therefore identifies the stable, descending branch of the \(WHP(q)\) curve and performs bisection only on that branch.
+
+\subsubsection*{Boundary-condition handling}
+
+The solver supports two main boundary-condition types:
+
+\begin{enumerate}
+    \item \textbf{Fixed-pressure sink:} the separator pressure is prescribed, and the rates are obtained from the coupling between inflow and tubing/outflow performance.
+    \item \textbf{Fixed-rate sink:} the total liquid rate is prescribed, and the solver determines the common wellhead pressure that makes the sum of the stable-branch well rates match the target throughput.
+\end{enumerate}
+
+\subsubsection*{Network pressure march}
+
+Once wellhead rates are known, the solver accumulates rates downstream through the graph and then marches pressures along flowlines and chokes. During this step, it also stores pressure-traverse profiles for later plotting.
+
+\subsubsection*{Nodal analysis utility}
+
+The same module also provides a helper function that generates IPR and OPR curves for a single well. This function is used later by the visualization layer to show the operating point in a classical nodal-analysis plot.
+
+\subsection*{\texttt{plotting.py}}
+
+This module contains the post-processing and visualization tools. Its functions create figures for the main engineering outputs of the simulator, including:
+
+\begin{itemize}
+    \item nodal analysis curves (\texttt{plot\_nodal\_analysis});
+    \item wellbore pressure profiles (\texttt{plot\_pressure\_profile});
+    \item network node pressures and rates (\texttt{plot\_network\_pressures});
+    \item flowline pressure traverses (\texttt{plot\_flowline\_profile});
+    \item elevation profiles for pipelines (\texttt{plot\_pipeline\_elevation});
+    \item a combined well dashboard (\texttt{plot\_well\_dashboard}).
+\end{itemize}
+
+These utilities are separate from the numerical core, which keeps the simulator structure clean and avoids mixing numerical algorithms with presentation logic.
+
+\subsection*{\texttt{main\_wells.py}}
+
+The main script acts as the execution layer of the simulator. Although its full code is not reproduced here, its role in the present architecture is to:
+
+\begin{itemize}
+    \item create fluid objects;
+    \item read survey files;
+    \item instantiate wells, flowlines, chokes, and boundary nodes;
+    \item assemble them into a \texttt{ProductionNetwork};
+    \item call the solver;
+    \item request plots and organize the final outputs.
+\end{itemize}
+
+Thus, \texttt{main\_wells.py} is the entry point that connects the modules into a complete simulation workflow. 
+Figure~\ref{fig:code-architecture} shows how the modules interact during a typical simulation.
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[
+    node distance=1.6cm and 2.1cm,
+    box/.style={
+        draw,
+        rounded corners,
+        align=center,
+        minimum width=3.5cm,
+        minimum height=1.1cm,
+        font=\small,
+        fill=blue!5
+    },
+    line/.style={->, thick}
+]
+
+\node[box] (main) {\texttt{main\_wells.py}\\Execution / setup};
+
+\node[box, below left=of main] (survey) {\texttt{survey\_reader.py}\\Survey import \\ and preprocessing};
+
+\node[box, below=of main] (fluid) {\texttt{fluid\_correlations.py}\\Black-oil PVT \\ and fluid properties};
+
+\node[box, below right=of main] (multi) {\texttt{multiphase\_correlations.py}\\Beggs--Brill / \\ Hagedorn--Brown};
+
+\node[box, below=2.5cm of fluid, minimum width=4.2cm] (components) {\texttt{network\_components.py}\\Nodes, wells, flowlines, \\ chokes, manifolds};
+
+\node[box, below=of components, minimum width=4.3cm] (solver) {\texttt{network\_solver.py}\\Network assembly, stable-branch logic, \\ rate accumulation, pressure march};
+
+\node[box, below=of solver] (plot) {\texttt{plotting.py}\\Figures and dashboards};
+
+\draw[line] (main) -- (survey);
+\draw[line] (main) -- (fluid);
+\draw[line] (main) -- (multi);
+
+\draw[line] (survey) -- (components);
+\draw[line] (fluid) -- (components);
+\draw[line] (multi) -- (components);
+
+\draw[line] (components) -- (solver);
+\draw[line] (solver) -- node[left, font=\scriptsize] {profiles, pressures, rates} (plot);
+
+\draw[line] (fluid.east) to[out=0,in=90] (multi.north);
+% \draw[line] (solver.west) to[out=180,in=270] node[left, font=\scriptsize] {profiles, pressures, rates} (plot.west);
+
+\end{tikzpicture}
+\caption{Interaction between the main modules of the network simulator.}
+\label{fig:code-architecture}
+\end{figure}
+
+\subsection*{Summary of the Workflow}
+
+The full workflow can be summarized as follows:
+
+\begin{enumerate}
+    \item Survey data are read and converted into a usable trajectory representation.
+    \item Fluid properties are evaluated from the black-oil model.
+    \item Hydraulic correlations are selected according to inclination and flow conditions.
+    \item Physical components such as wells, flowlines, chokes, and nodes are instantiated.
+    \item The network solver applies the required boundary conditions and computes the rates and pressures across the system.
+    \item The results are visualized through nodal plots, well profiles, flowline traverses, and network summary figures.
+\end{enumerate}
+
+This modular architecture allows each part of the simulator to be validated independently while preserving a clear integration path for full-field or multiwell network calculations.
+
+\subsection{Simulation Results and Pipesim Comparison}
+
+In order to validate the simulator, it was created a simple network with 7 wells and three manifolds. The same network used in the previous section and shown in 
+Figure~\ref{fig:network_configuration} was implemented. The fluid characteristics, well configurations, resevoir produtivity index, pipelines diameters and
+boundary conditions were the same as the ones used in the previous section. 
+
+The resultant PVT properties used in the simulator are shown in the Figure~\ref{fig:pvt_properties}. Other outputs are obtained as result of the simulation. The Figure~\ref{fig:nodal_analysis} shows the nodal analysis for the 7 wells, where it is possible to see the IPR and OPR curves and the operating point for each well. 
+The wellbore pressure profiles for the 7 wells are shown in the Figure~\ref{fig:pressure_profiles} as well the flowlines pressure traverses are shown in the Figure~\ref{fig:flowline_profiles}. 
+The summary or network pressures and rates are shown in the Figure~\ref{fig:network_pressures} and, finally, the network schematic with the pressures and rates is shown in the Figure~\ref{fig:network_schematic}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/fig7_fluid_pvt.png}
+    \caption{PVT properties used in the simulator for the 7 wells.}
+    \label{fig:pvt_properties}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/fig1_nodal_all_wells.png}
+    \caption{Nodal analysis for the 7 wells, showing IPR and OPR curves and operating points.}
+    \label{fig:nodal_analysis}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/fig2_wellbore_profiles.png}
+    \caption{Wellbore pressure profiles for the 7 wells.}
+    \label{fig:pressure_profiles}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/fig4_flowline_traverses.png}
+    \caption{Flowline pressure traverses for the 7 wells.}
+    \label{fig:flowline_profiles}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{figs/fig3_node_summary.png}
+    \caption{Summary of network pressures and rates at key nodes.}
+    \label{fig:network_pressures}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figs/fig6_network_schematic.png}
+    \caption{Network schematic showing pressures and rates at each node.}
+    \label{fig:network_schematic}
+\end{figure}

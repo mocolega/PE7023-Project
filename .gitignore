@@ -9,3 +9,5 @@
 *.pdf
 *.gz
 *.toc
+__pycache__/
+*.ipynb_checkpoints
