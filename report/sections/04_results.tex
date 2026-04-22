@@ -2,49 +2,66 @@
 %  RESULTS  (sections/04_results.tex)
 % =============================================================
 
-\chapter{Results}
+\chapter{Final Network Configuration and Production Strategy}
 
 % Present your results using the SAME subsection structure as the
 % Procedure chapter. Reference figures and tables in the text;
 % do not let them stand alone without discussion.
 
 % ----- Subsection 1 -------------------------------------------
-\section{Phase / Method 1 Results}
-\label{sec:res_phase1}
+\section{Wells}
+\label{sec:res_wells}
+The well design process was developed as shown in Section~\ref{subsec:well}. It was defined the tubing and production casing for the default well. 
+It was also informed the gas lift rate needed to mantain the production rate of 6428.57 bbl/day. The final design of the well is shown in Table~\ref{tab:well_design}.
+\begin{table}[ht]
+    \centering
+    \caption{Final well design.}
+    \label{tab:well_design}
+    \begin{tabular}{lccc}
+        \hline
+        Parameter & OD & ID & Unit \\
+        \hline
+        Tubing Diameter & 3.5 & 2.922 & inches \\
+        Production Casing Diameter & 7.0 & 5.92 & inches \\
+        \hline
+    \end{tabular}
+\end{table}
 
-\lipsum[7] % Replace with your results narrative
+The gas lift is need for water cuts higher than 5\%. The maximum gas lift rate needed is 1.6~MMscf/day, for a water cut of 95\%. The Table~\ref{tab:gas_lift} shows the minimum gas lift rate needed for different water cuts.
+Using those gas lift rates is also asured that the well head pressure will be higher than 1200 psi, which is the minimum pressure needed to avoid parafin deposition.
+\begin{table}[ht]
+    \centering
+    \caption{Minimum gas lift rate needed for different water cuts.}
+    \label{tab:gas_lift}
+    \begin{tabular}{lcc}
+        \hline
+        Water Cut (\%) & Gas Lift Rate (MMscf/day) \\
+        \hline
+        2 & 0.0 \\
+        5 & 0.0 \\
+        20 & 0.2 \\
+        35 & 0.6 \\
+        70 & 1.2 \\
+        90 & 1.6 \\ 
+        95 & 1.6 \\
+        \hline
+    \end{tabular}
+\end{table}
 
-% Example figure reference:
-% As shown in \cref{fig:example}, the measured values indicate that...
+\section{Pipeline}
 
-% --- Example Figure ---
-% \begin{figure}[htbp]
-%     \centering
-%     \includegraphics[width=0.75\textwidth]{figures/your_figure.pdf}
-%     \caption{Descriptive caption for Figure 1.}
-%     \label{fig:example}
-% \end{figure}
+\section{Production Strategy}
 
-% ----- Subsection 2 -------------------------------------------
-\section{Phase / Method 2 Results}
-\label{sec:res_phase2}
+It is expected that the field can produce with 3 wells off. If it is necessary to maintain the minimum well head pressure, the total 
+field liquid production should be reduced to 19285 bbl/day, correponding to a 4 wells producing at the maximum liquid rate.
+The economic analysis of the project shows that it more profitable to produce the well with a reduced gas lift injection rate. The Figure~\ref{optimal_gas_lift_50} and Figure~\ref{optimal_gas_lift_30} show the optimal gas lift injection rate for different 
+oil prices, for a \$50/bbl and \$30/bbl, respectively. 
 
-\lipsum[8] % Replace with your results narrative
+\section{Network Simulator}
 
-% Example table reference:
-% \Cref{tab:example} summarises the key measurements obtained.
+A network simulator was developed to model the production of the field. It used tha Hagedorn and Brown correlation to model the
+two-phase flow in the well and the Beggs and Brill correlation to model the two-phase flow in the pipeline. 
+The simulator was used to predict the flow rates and pressures in the wells and manifolds, showing a good agreement with the 
+Pipesim results, being a useful tool for the production optimization of the field in the case where Pipesim is not available.
 
-% --- Example Table ---
-% \begin{table}[htbp]
-%     \centering
-%     \caption{Descriptive caption for Table 1.}
-%     \label{tab:example}
-%     \begin{tabular}{lcc}
-%         \toprule
-%         Parameter & Value & Unit \\
-%         \midrule
-%         Example A & 1.23  & m    \\
-%         Example B & 4.56  & kPa  \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table}
+

@@ -58,7 +58,7 @@ fluid = BlackOilFluid(
     wc           = 0.05,
     T_F          = 150.0,
     p_res_psia   = 3800.0,
-    p_sep_psia   = 1202.54,
+    p_sep_psia   = 14.54,
 )
 
 print("=" * 62)
@@ -80,15 +80,16 @@ WELL_PARAMS = dict(
     eps_in     = 0.001,
     J_stbd_psi = 5.9,
     Pr_psia    = 3800,
-    Pwh_psia   = 1200,
+    # Pwh_psia   = 1200,
 )
 
 SURVEY_DIR = os.path.dirname(os.path.abspath(__file__))
 
 wells = []
 for i in range(1, 8):
-    csv_path = os.path.join(SURVEY_DIR, f'w{i}_survey.csv')
+    csv_path = os.path.join(SURVEY_DIR, f'w{1}_test.csv')
     survey   = read_survey(csv_path, verbose=True)
+    
     w = Well(name=f"Well_{i}", fluid=fluid, survey=survey, **WELL_PARAMS)
     wells.append(w)
 

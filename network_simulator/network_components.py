@@ -288,11 +288,12 @@ class Well:
                 # Get appropriate correlation
                 corr = get_correlation(self.fluid, self.ID_in,
                                        theta_from_horiz, self.eps_in)
-
+                
                 # dP/dL at mid-segment pressure (floor p to avoid singularities)
                 p_safe = max(p_curr, 14.7)
                 try:
                     dpdl = corr.dpdl_psi_ft(q_stbd, p_safe)
+                    
                 except (OverflowError, ZeroDivisionError, ValueError):
                     dpdl = 0.0
 
@@ -430,6 +431,7 @@ class FlowlinePipe:
             p_curr = max(p_curr, 14.7)
             try:
                 dpdl = corr.dpdl_psi_ft(q_stbd, p_curr)
+                
             except (OverflowError, ZeroDivisionError, ValueError):
                 dpdl = 0.0
             dp   = dpdl * seg['L_ft']
