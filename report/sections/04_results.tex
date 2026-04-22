@@ -49,6 +49,51 @@ Using those gas lift rates is also asured that the well head pressure will be hi
 \end{table}
 
 \section{Pipeline}
+\label{sec:res_pipeline}
+
+The subsea flowline connecting manifold~M2 to the LOP follows the 14-point
+bathymetric survey of the corridor, spanning 46{,}617~ft with a maximum riser
+depth of 3{,}000~ft. A \textbf{10-inch internal diameter} was selected as the
+minimum viable size, yielding an inlet pressure of 1{,}040~psia at the
+worst-case condition (WC~=~2\%, 7~wells), within the 1{,}200~psia wellhead
+pressure constraint. The system remains operable under reduced production, with
+an inlet pressure of 605~psia when three wells are offline simultaneously.
+
+The pipeline inlet pressure decreases with increasing water cut, falling to
+785~psia at WC~=~95\%, primarily due to the reduction in mixture density and
+frictional losses at higher water fractions. All watercut scenarios remain
+within the WHP constraint without additional intervention.
+
+Thermal analysis confirmed that full 7-well production maintains outlet
+temperatures above the WAT of 100\textdegree F across all water cuts.
+However, under reduced production (4~wells) with 1~inch of insulation, the
+outlet temperature drops to 86.98\textdegree F at WC~=~2\%---below the WAT
+and posing a wax deposition risk. A minimum insulation thickness of
+\textbf{2~inches} ($k = 0.2$~Btu/(h$\cdot$\textdegree F$\cdot$ft)) is
+therefore specified, raising the worst-case outlet temperature to
+107.5\textdegree F. The key pipeline design parameters are summarised in
+Table~\ref{tab:pipeline_summary}.
+
+\begin{table}[htbp]
+\centering
+\caption{Final pipeline design parameters.}
+\label{tab:pipeline_summary}
+\begin{tabular}{lcc}
+\toprule
+Parameter & Value & Unit \\
+\midrule
+Internal diameter         & 10       & in \\
+Total length              & 46{,}617 & ft \\
+Maximum riser depth       & 3{,}000  & ft \\
+Insulation thickness      & 2        & in \\
+Insulation conductivity   & 0.2      & Btu/(h$\cdot$\textdegree F$\cdot$ft) \\
+Separator pressure (LOP)  & 350      & psia \\
+Inlet pressure (WC~=~2\%, 7~wells) & 1{,}040 & psia \\
+Inlet pressure (WC~=~2\%, 4~wells) & 605     & psia \\
+Worst-case outlet temperature (2~in insulation) & 107.5 & \textdegree F \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Production Strategy}
 

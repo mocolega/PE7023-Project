@@ -138,6 +138,13 @@ Using Pipesim was used to find the Wellhead Pressure (WHP) for different water c
 
 \subsubsection{Boundary Conditions}
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{figs/Pipeline Design.png}
+    \caption{PIPESIM pipeline network model for the m2--LOP corridor.}
+    \label{fig:pipeline_design}
+\end{figure}
+
 To model the subsea pipeline independently from the well network, the pipeline
 was treated as a mass-to-pressure boundary condition system. The inlet
 conditions at manifold~2 (m2) were derived from the well-level PIPESIM
@@ -350,6 +357,7 @@ for the pipeline. This ensures that even under the most thermally demanding
 condition---low watercut and reduced well count---the fluid temperature at
 the LOP exceeds the WAT of 100\textdegree F, preventing wax deposition and
 maintaining flow assurance throughout the field life.
+
 \subsection{Production Profile and Short Economic Analysis}
 
 In this section the analysis was made just for Well 1. Because the production forecast predicts a water cut improvement, the system analysis should be made for different water cuts, since the flow conditions and necessary gas-lift rate will change with the water cut.
@@ -531,7 +539,44 @@ is 10015 days, which is a significant improvement.
 \end{figure}
 
 
+\subsubsection{Pipeline Operational Issues and Mitigation}
+\label{subsubsec:pipeline_issues}
 
+The 10-inch pipeline sized in Section~\ref{subsec:pipeline_design} performs
+within constraints under the design conditions, but three operational issues
+warrant attention over the field life.
+
+\paragraph{Declining inlet pressure with increasing water cut.}
+As shown in Table~\ref{tab:q4_results}, the pipeline inlet pressure drops
+from 1{,}040~psia at WC~=~2\% to 785~psia at WC~=~95\%. Because the well
+network was sized to maintain a minimum wellhead pressure of 1{,}200~psia,
+this falling back-pressure at the manifold is beneficial for well
+deliverability. However, it also means the pipeline operates increasingly
+below its design inlet pressure, which changes the flow regime and mixture
+velocity over time. A back-pressure control valve at the LOP can be used to
+regulate separator inlet conditions and maintain stable flow.
+
+\paragraph{Wax deposition risk under reduced production.}
+At low watercut with only four wells online, the outlet temperature drops to
+86.98\textdegree F --- below the WAT of 100\textdegree F --- with 1~inch of
+insulation. This is the most critical flow assurance threat for this pipeline.
+The selected mitigation is 2~inches of insulation, which raises the outlet
+temperature to 107.5\textdegree F under worst-case conditions. During planned
+or unplanned well shutdowns, particularly at early field life when water cut is
+low, pigging should be scheduled regularly to remove any wax deposits that
+accumulate during transient cool-down periods before the pipeline reaches
+steady-state temperature.
+
+\paragraph{Slugging at high gas-oil ratio.}
+At high water cuts, the effective pipeline GOR increases substantially ---
+from 800~scf/STB at WC~=~2\% to 5{,}778~scf/STB at WC~=~95\% --- due to the
+accumulating gas-lift injection gas. The combination of a long flowline
+(46{,}617~ft), a 3{,}000~ft riser, and a high GOR creates conditions
+favorable for severe slugging at the base of the riser. A slug catcher at the
+LOP separator should be included in the facility design to handle the liquid
+surges associated with slug arrival, and gas-lift injection rates should be
+managed to avoid unnecessarily elevating the GOR beyond what is required for
+production optimization.
 
 
 
@@ -543,6 +588,8 @@ is 10015 days, which is a significant improvement.
 In this section will be discused the implementation of network simulator and the results obtained from the simulations.
 The code was implemented in Python using Claude.ai as conding assistant. It was decided to make the subsurface and surface network in
 a integrated way, so the network simulator will be able to evaluate the impact of the surface network on the subsurface and vice versa.
+
+
 
 \section{Code Structure and Module Interaction}
 
@@ -822,3 +869,206 @@ The summary or network pressures and rates are shown in the Figure~\ref{fig:netw
     \caption{Network schematic showing pressures and rates at each node.}
     \label{fig:network_schematic}
 \end{figure}
+
+% ══════════════════════════════════════════════════════════════
+\clearpage
+\subsection{PIPESIM Mechanistic versus Python Comparison}
+\label{subsec:pipesim_vs_python}
+
+% ── 2.X.1  Overview ──────────────────────────────────────────
+\subsubsection{Overview and Code Structure}
+
+To supplement the PIPESIM network simulations, a Python model was developed
+to replicate the wellbore pressure traverses independently of a commercial
+simulator. The Python code constructs a seven-well network identical in
+topology to the PIPESIM model: each well is represented as a constant-mass
+source at the sandface, and the wellbore is discretised into 60 depth
+increments from perforations (TVD = 4{,}642~ft) to the wellhead. Boundary
+conditions (flowing bottomhole pressure $P_{wf} = 2{,}710.4$~psia,
+$q_{\text{liq}} \approx 6{,}000$~STB/d per well) were taken directly from
+the calibrated PIPESIM results.
+
+Two pressure-traverse functions were implemented:
+
+\begin{enumerate}
+    \item \textbf{Isothermal traverse} — assumes a constant mixture density
+          ($\rho_{\text{mix}} = 48$~lb/ft$^{3}$) and a fixed Darcy--Weisbach
+          friction factor ($f = 0.018$), yielding a uniform pressure gradient
+          throughout the tubing string. This is the primary function used for
+          comparison with PIPESIM.
+
+    \item \textbf{Geothermal traverse} — introduces a linear temperature
+          gradient from surface (80°F) to bottomhole (200°F, with sensitivity
+          cases at 180°F and 220°F). Fluid density is adjusted at each depth
+          increment using simplified temperature-dependent correlations for
+          oil, water, and gas, providing a first-order estimate of the
+          thermal effect on the pressure profile.
+\end{enumerate}
+
+The assignment permitted the selection of any mechanistic multiphase flow
+correlations. For vertical tubing, the TUFFP Unified model (M1) and the
+Gomez Enhanced correlation with Xiao Modified Film transition (M2) were
+selected as the two mechanistic models for the PIPESIM simulations, both
+of which are well-established for deepwater, high-rate multiphase
+applications. The Python implementation uses a simplified isothermal
+gradient as an independent analytical baseline; the impact of this thermal 
+assumption on the pressure profile is discussed 
+in the subsection below.
+
+% ── 2.X.2  Pressure Traverse Comparison ─────────────────────
+\subsubsection{Pressure Traverse Profile Comparison}
+
+Figure~\ref{fig:pressure_traverse} presents the wellbore pressure traverse
+profiles for all seven wells under three models: the Python isothermal
+model, PIPESIM Model~1 (M1, TUFFP Unified), and PIPESIM Model~2 (M2, Gomez
+Enhanced / Xiao Modified Film). The PIPESIM profiles are represented as
+straight lines connecting the known sandface and wellhead pressures, since
+only endpoint values were extracted from the simulator.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figs/pipesim_01_pressure_traverse.png}
+    \caption{Wellbore pressure traverse profiles for all seven wells.
+             Blue: Python isothermal model; red dashed: PIPESIM M1 (TUFFP
+             Unified); green dash-dot: PIPESIM M2 (Gomez Enhanced / Xiao
+             Modified Film). All wells share TVD~=~4{,}642~ft and
+             $P_{wf}=2{,}710.4$~psia.}
+    \label{fig:pressure_traverse}
+\end{figure}
+
+The Python isothermal traverse predicts a wellhead pressure of
+1{,}190~psia uniformly across all seven wells, since the model uses a
+single constant mixture density independent of flow rate. The two PIPESIM
+mechanistic models yield higher wellhead pressures in the range
+1{,}282--1{,}346~psia, reflecting the more rigorous treatment of
+multiphase flow regimes, slip between phases, and frictional losses in
+the tubing string. The offset between the Python and PIPESIM curves is
+therefore a direct consequence of the isothermal, single-density
+assumption rather than a network-level discrepancy.
+
+% ── 2.X.3  Wellhead Pressure and Tubing ΔP ──────────────────
+\subsubsection{Wellhead Pressure and Tubing Pressure Drop}
+
+Figures~\ref{fig:wellhead_pressure} and~\ref{fig:tubing_dp} quantify the
+model-to-model spread at the wellhead and across the tubing string,
+respectively.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figs/pipesim_02_wellhead_pressure.png}
+    \caption{Wellhead pressure comparison across the three flow models for
+             wells W1--W7. Python isothermal (blue): 1{,}190~psia for all
+             wells; PIPESIM M1 TUFFP (red): 1{,}282--1{,}319~psia; PIPESIM
+             M2 Gomez/Xiao (green): 1{,}304--1{,}346~psia.}
+    \label{fig:wellhead_pressure}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figs/pipesim_03_tubing_dp.png}
+    \caption{Tubing pressure drop ($P_{wf} - P_{wh}$) per well for all
+             three models. The shaded band represents the sensitivity range
+             between PIPESIM M1 and M2. Annotations show the M1--M2
+             difference in psia.}
+    \label{fig:tubing_dp}
+\end{figure}
+
+The Python model predicts a constant tubing $\Delta P$ of 1{,}520~psia
+across all wells — a flat line in Figure~\ref{fig:tubing_dp} — because
+the isothermal density assumption decouples the pressure gradient from
+flow rate. The PIPESIM mechanistic models produce tubing $\Delta P$
+values in the range 1{,}363--1{,}429~psia, approximately 90--160~psia
+lower than the Python estimate. This indicates that the isothermal model
+over-predicts the hydrostatic component of the pressure gradient by
+assuming a heavier-than-actual mixture throughout the full tubing length.
+
+% ── 2.X.4  Effect of Temperature Assumption ─────────────────
+\subsubsection{Effect of Temperature Assumption on the Pressure Profile}
+\label{subsubsec:temperature_effect}
+
+Figure~\ref{fig:temperature_effect} isolates the effect of the temperature
+assumption on the pressure traverse for representative well W1, comparing
+four temperature profiles against the PIPESIM M1 and M2 wellhead pressures.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figs/pipesim_06_temperature_effect.png}
+    \caption{Effect of temperature assumption on the W1 wellbore pressure
+             profile. Four Python cases are shown: isothermal at 200°F
+             (blue, solid); geothermal gradient 80--200°F (red, dashed);
+             shallow reservoir 80--180°F (green, dash-dot); hot reservoir
+             80--220°F (orange, dotted). Vertical dashed lines mark the
+             PIPESIM M1 and M2 wellhead pressures.}
+    \label{fig:temperature_effect}
+\end{figure}
+
+All four temperature cases produce nearly identical pressure profiles,
+with the surface pressure clustering within a narrow band
+($\approx 1{,}620$--$1{,}640$~psia at the wellhead in the Python
+geothermal cases). This insensitivity to temperature arises because the
+simplified density correlations used in the geothermal traverse produce
+only small changes in mixture density over the range of temperatures
+considered. The dominant driver of the offset between the Python profiles
+and the PIPESIM endpoint values (1{,}292 and 1{,}304~psia) is therefore
+the choice of multiphase flow correlation — specifically the absence of
+a slip-corrected holdup model such as Hagedorn~\& Brown — rather than
+the thermal assumption.
+
+These results confirm that for this well geometry and flow rate, adopting
+a geothermal gradient in place of an isothermal assumption has a second-
+order effect on wellhead pressure prediction, while the selection of
+multiphase flow model has a first-order effect.
+
+% ── 2.X.5  Flow Model Sensitivity (PIPESIM M1 vs M2) ────────
+\subsubsection{PIPESIM Flow Model Sensitivity: TUFFP Unified vs.\
+               Gomez Enhanced / Xiao Modified Film}
+
+Figures~\ref{fig:liquid_rates} and~\ref{fig:junction_pressures} present
+the PIPESIM model sensitivity study across the two mechanistic models
+for well liquid rates and manifold junction pressures.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.92\textwidth]{figs/pipesim_04_liquid_rates.png}
+    \caption{Per-well total liquid rates from PIPESIM M1 (TUFFP Unified,
+             red) and M2 (Gomez Enhanced / Xiao Modified Film, green).
+             Annotations show the M1--M2 difference in STB/d.}
+    \label{fig:liquid_rates}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figs/pipesim_05_junction_pressures.png}
+    \caption{Manifold junction pressures at nodes M1, M2, and M3 for
+             PIPESIM M1 and M2. Both models yield identical junction
+             pressures (1{,}176.3, 1{,}140.6, and 1{,}182.5~psia
+             respectively), indicating that the flow model choice does
+             not propagate differences to the network junction level
+             under these conditions.}
+    \label{fig:junction_pressures}
+\end{figure}
+
+The two mechanistic models produce total network liquid rates that agree
+to within 61~STB/d out of $\approx 45{,}000$~STB/d
+($< 0.14\%$ relative difference). Well-level rate differences are small
+and non-systematic (ranging from $-17$ to $+19$~STB/d), suggesting that
+the network operating point is stable regardless of which of the two
+correlation sets is used.
+
+At the wellhead, however, M2 (Gomez Enhanced / Xiao Modified Film)
+consistently predicts higher pressures than M1 (TUFFP Unified) by
+13--36~psia. This systematic offset reflects the different slip and
+friction treatments in the two mechanistic models: the Xiao Modified
+Film model for stratified-annular transition tends to predict higher
+frictional pressure losses in the vertical tubing compared to the TUFFP
+Unified approach. In a facility design context, this spread defines the
+model uncertainty band that should be carried forward into
+equipment-sizing calculations.
+
+The identical junction pressures produced by M1 and M2
+(Figure~\ref{fig:junction_pressures}) indicate that the flowline and
+riser hydraulics, which dominate the network pressure balance at the
+manifold level, are insensitive to the choice of tubing correlation
+under these operating conditions. Practical consequences of model
+selection are therefore most significant for wellhead equipment ratings
+and choke sizing rather than for pipeline or riser design.

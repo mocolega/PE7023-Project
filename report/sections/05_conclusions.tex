@@ -4,14 +4,91 @@
 
 \chapter{Conclusions}
 
-% This chapter is an EXPANDED version of the Executive Summary.
-% Interpret the results, explain their significance, and state
-% what was learned or achieved. Address the project objectives
-% stated in the Introduction. You may also note limitations and
-% recommend future work.
+This project demonstrated the integrated design of a seven-well subsea production
+system capable of sustaining a field-wide target rate of 45,000~STB/d from a
+bubble-point reservoir at 3,800~psia.
+The two-part scope covered analytical well and pipeline sizing followed by a
+Python-based nodal-analysis simulator benchmarked against PIPESIM, and confirmed
+that the design objectives are achievable with the selected completion and
+surface-facility parameters.
 
-\lipsum[9-10] % Replace with your conclusions
+\section{Well and Completion Design}
 
-% Optional: recommendations subsection
-% \section{Recommendations}
-% \lipsum[11]
+All seven producers were designed with 3.5-in tubing and sized for individual
+plateau rates of approximately 6,400~STB/d.
+Gas-lift was selected as the primary artificial-lift mechanism to supplement
+reservoir energy as bottomhole flowing pressure declines over the field life.
+Sensitivity analysis showed that the combination of tubing size and injection
+gas rate provides sufficient operating flexibility to accommodate the expected
+range of water-cut increase and GOR evolution without requiring tubing
+replacement.
+The nodal analysis solutions confirmed stable, unique operating points for each
+well at plateau conditions, with bottomhole flowing pressures comfortably above
+the bubble point throughout the early production period.
+
+\section{Pipeline and Riser System}
+
+The export pipeline was sized at a 10-in internal diameter over a total tieback
+length of 46,617~ft, including a 3,000-ft steel catenary riser, with 2-in
+polyurethane insulation applied along the full length.
+At plateau, the system delivers fluids to the host facility at an inlet pressure
+of approximately 565~psia and an arrival temperature well above the wax
+appearance temperature, confirming that flow-assurance requirements are met
+under normal operating conditions.
+Three principal operational risks were identified for later field life: declining
+inlet pressure as water cut rises and reservoir pressure depletes; wax deposition
+risk during reduced-rate or shutdown periods when line temperatures approach the
+wax appearance temperature; and slug formation at elevated GOR.
+Mitigation measures including progressive gas-lift rate adjustment, chemical
+inhibitor injection, and pigging capability were incorporated into the recommended
+operating envelope.
+
+\section{Python Simulator and PIPESIM Benchmarking}
+
+The object-oriented Python simulator developed in Part~2 reproduced the
+PIPESIM mechanistic-model results within acceptable tolerances across the full
+range of flow conditions tested.
+Pressure-drop predictions along the pipeline agreed to within a few percent
+for both the Beggs--Brill and Hagedorn--Brown correlations, validating the
+implementation of the multi-phase flow and heat-transfer routines.
+Discrepancies at high water-cut conditions were attributed to the simplified
+mixture-viscosity treatment in the empirical correlations relative to
+PIPESIM's mechanistic model, and represent a clear direction for future
+refinement.
+The modular code architecture, which separates well inflow, tubing hydraulics,
+pipeline hydraulics, and the network solver into distinct classes, facilitates
+extension to time-dependent production forecasting and more rigorous
+thermodynamic property estimation.
+
+\section{Production Profile and Economic Outlook}
+
+The integrated production profile projects a plateau of 45,000~STB/d sustained
+for approximately four years, followed by a natural decline governed by
+reservoir depletion and increasing water cut.
+Economic screening using the projected oil price and development cost
+assumptions yielded a positive net present value, confirming project viability
+under the base-case scenario.
+The production forecast is sensitive primarily to the rate of water-cut
+increase and the cost of gas-lift compression; both parameters warrant
+closer definition during front-end engineering.
+
+\section{Recommendations}
+
+Based on the findings of this study, the following work is recommended prior
+to a final investment decision:
+
+\begin{itemize}
+    \item Acquire PVT fluid samples and conduct laboratory wax-appearance and
+          hydrate-equilibrium measurements to replace the estimated
+          flow-assurance parameters used in this study.
+    \item Perform a full dynamic simulation (e.g., OLGA) of the pipeline and
+          riser to quantify slug volumes and confirm the sizing of slug-catcher
+          facilities at the host.
+    \item Extend the Python nodal-analysis simulator to a time-stepping
+          reservoir-coupled model to generate a rigorous field-decline curve
+          and refine the economic analysis.
+    \item Evaluate alternative lift strategies, in particular electrical
+          submersible pumps, for the later field-life period when reservoir
+          pressure and GOR conditions move outside the efficient operating
+          window of gas-lift.
+\end{itemize}
