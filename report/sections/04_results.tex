@@ -4,15 +4,16 @@
 
 \chapter{Final Network Configuration and Production Strategy}
 
-% Present your results using the SAME subsection structure as the
-% Procedure chapter. Reference figures and tables in the text;
-% do not let them stand alone without discussion.
-
 % ----- Subsection 1 -------------------------------------------
 \section{Wells}
 \label{sec:res_wells}
-The well design process was developed as shown in Section~\ref{subsec:well}. It was defined the tubing and production casing for the default well. 
-It was also informed the gas lift rate needed to mantain the production rate of 6428.57 bbl/day. The final design of the well is shown in Table~\ref{tab:well_design}.
+The well design process was developed as described in Section~\ref{subsec:well}.
+The tubing and production casing were defined for the default well using
+\emph{PIPESIM} nodal analysis \cite{Schlumberger2023} and the Darcy productivity
+index formulation \cite{Craft1991}. The gas-lift rate needed to maintain the
+production rate of 6,428.57~STB/d was also determined \cite{Lea2008}. The final
+well design is shown in Table~\ref{tab:well_design}.
+
 \begin{table}[ht]
     \centering
     \caption{Final well design.}
@@ -27,22 +28,26 @@ It was also informed the gas lift rate needed to mantain the production rate of 
     \end{tabular}
 \end{table}
 
-The gas lift is need for water cuts higher than 5\%. The maximum gas lift rate needed is 1.6~MMscf/day, for a water cut of 95\%. The Table~\ref{tab:gas_lift} shows the minimum gas lift rate needed for different water cuts.
-Using those gas lift rates is also asured that the well head pressure will be higher than 1200 psi, which is the minimum pressure needed to avoid parafin deposition.
+Gas-lift is required for water cuts higher than 5\% \cite{Lea2008}. The maximum
+gas-lift rate needed is 1.6~MMscf/d at a water cut of 95\%. Table~\ref{tab:gas_lift}
+shows the minimum gas-lift rate required for each water cut scenario.
+Using these gas-lift rates also ensures that the wellhead pressure remains above
+1,200~psia, which is the minimum pressure required to avoid asphaltene deposition.
+
 \begin{table}[ht]
     \centering
-    \caption{Minimum gas lift rate needed for different water cuts.}
+    \caption{Minimum gas-lift rate required for different water cuts.}
     \label{tab:gas_lift}
     \begin{tabular}{lcc}
         \hline
-        Water Cut (\%) & Gas Lift Rate (MMscf/day) \\
+        Water Cut (\%) & Gas-Lift Rate (MMscf/d) \\
         \hline
-        2 & 0.0 \\
-        5 & 0.0 \\
+        2  & 0.0 \\
+        5  & 0.0 \\
         20 & 0.2 \\
         35 & 0.6 \\
         70 & 1.2 \\
-        90 & 1.6 \\ 
+        90 & 1.6 \\
         95 & 1.6 \\
         \hline
     \end{tabular}
@@ -54,23 +59,24 @@ Using those gas lift rates is also asured that the well head pressure will be hi
 The subsea flowline connecting manifold~M2 to the LOP follows the 14-point
 bathymetric survey of the corridor, spanning 46{,}617~ft with a maximum riser
 depth of 3{,}000~ft. A \textbf{10-inch internal diameter} was selected as the
-minimum viable size, yielding an inlet pressure of 1{,}040~psia at the
-worst-case condition (WC~=~2\%, 7~wells), within the 1{,}200~psia wellhead
-pressure constraint. The system remains operable under reduced production, with
-an inlet pressure of 605~psia when three wells are offline simultaneously.
+minimum viable size \cite{Schlumberger2023}, yielding an inlet pressure of
+1{,}040~psia at the worst-case condition (WC~=~2\%, 7~wells), within the
+1{,}200~psia wellhead pressure constraint. The system remains operable under
+reduced production, with an inlet pressure of 605~psia when three wells are
+offline simultaneously.
 
 The pipeline inlet pressure decreases with increasing water cut, falling to
 785~psia at WC~=~95\%, primarily due to the reduction in mixture density and
-frictional losses at higher water fractions. All watercut scenarios remain
-within the WHP constraint without additional intervention.
+frictional losses at higher water fractions \cite{BeggsBrill1973}. All watercut
+scenarios remain within the WHP constraint without additional intervention.
 
 Thermal analysis confirmed that full 7-well production maintains outlet
-temperatures above the WAT of 100\textdegree F across all water cuts.
+temperatures above the WAT of 100\textdegree F across all water cuts \cite{Bai2005}.
 However, under reduced production (4~wells) with 1~inch of insulation, the
-outlet temperature drops to 86.98\textdegree F at WC~=~2\%---below the WAT
+outlet temperature drops to 86.98\textdegree F at WC~=~2\%, below the WAT
 and posing a wax deposition risk. A minimum insulation thickness of
 \textbf{2~inches} ($k = 0.2$~Btu/(h$\cdot$\textdegree F$\cdot$ft)) is
-therefore specified, raising the worst-case outlet temperature to
+therefore specified \cite{Bai2005}, raising the worst-case outlet temperature to
 107.5\textdegree F. The key pipeline design parameters are summarised in
 Table~\ref{tab:pipeline_summary}.
 
@@ -97,16 +103,22 @@ Worst-case outlet temperature (2~in insulation) & 107.5 & \textdegree F \\
 
 \section{Production Strategy}
 
-It is expected that the field can produce with 3 wells off. If it is necessary to maintain the minimum well head pressure, the total 
-field liquid production should be reduced to 19285 bbl/day, correponding to a 4 wells producing at the maximum liquid rate.
-The economic analysis of the project shows that it more profitable to produce the well with a reduced gas lift injection rate. The Figure~\ref{optimal_gas_lift_50} and Figure~\ref{optimal_gas_lift_30} show the optimal gas lift injection rate for different 
-oil prices, for a \$50/bbl and \$30/bbl, respectively. 
+The field can sustain production with up to three wells offline. If it is
+necessary to maintain the minimum wellhead pressure under that condition, the
+total field liquid production should be reduced to 19,285~STB/d, corresponding
+to four wells producing at the maximum liquid rate.
+The economic analysis shows that it is more profitable to produce with a reduced
+gas-lift injection rate rather than at the maximum allowable rate \cite{Lea2008}.
+Figures~\ref{optimal_gas_lift_50} and~\ref{optimal_gas_lift_30} show the optimal
+gas-lift injection rate for oil prices of \$50/bbl and \$30/bbl, respectively.
 
 \section{Network Simulator}
 
-A network simulator was developed to model the production of the field. It used tha Hagedorn and Brown correlation to model the
-two-phase flow in the well and the Beggs and Brill correlation to model the two-phase flow in the pipeline. 
-The simulator was used to predict the flow rates and pressures in the wells and manifolds, showing a good agreement with the 
-Pipesim results, being a useful tool for the production optimization of the field in the case where Pipesim is not available.
-
-
+A network simulator was developed in Python \cite{VanRossum2009} to model the
+production of the field. The Hagedorn-Brown correlation \cite{HagedornBrown1965}
+was used to model two-phase flow in the wells and the Beggs-Brill correlation
+\cite{BeggsBrill1973} was used to model two-phase flow in the pipeline.
+The simulator was validated against \emph{PIPESIM} \cite{Schlumberger2023}
+results, showing good agreement in predicted flow rates and pressures at the
+wells and manifolds. The simulator represents a useful independent tool for
+production optimization when commercial software is unavailable.

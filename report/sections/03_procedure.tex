@@ -4,33 +4,28 @@
 
 \chapter{Procedure and Results}
 
-% Describe WHAT YOU DID in enough detail that someone else could
-% replicate the work. Use subsections to organise distinct phases
-% or methods. Keep subsection names consistent with those you will
-% use in the Results chapter.
-
 % ----- Subsection 1 -------------------------------------------
 \section{Part 1}
 \label{sec:proc_part1}
 \subsection{Well Design}
-This subsecion describes the design of the default well. Because the wells were not drilled, it is necessary to specify the tubing and production casing.
-Is was informed that the inflow can be modeled as a single-phase steady-state solution of the Darcy equation for a vertical fully penetrating well.
-The Productivity Index (PI) equation is given by:
+\label{subsec:well}
+This subsection describes the design of the default well. Because the wells were
+not drilled, it is necessary to specify the tubing and production casing.
+It was informed that the inflow can be modeled as a single-phase steady-state
+solution of the Darcy equation for a vertical fully penetrating well
+\cite{Darcy1856}. The Productivity Index (PI) equation is given by:
 \begin{equation}
-    PI = \frac{q_{liq}}{\bar{p} - p_{wf}} = \frac{kh}{141.2 B_o \mu_o \left[\ln{\left(\frac{r_e}{r_{wf}}\right)}-0.5 + S\right]} \quad \text{STB/d/psi}
+    PI = \frac{q_{liq}}{\bar{p} - p_{wf}} = \frac{kh}{141.2 B_o \mu_o
+    \left[\ln{\left(\frac{r_e}{r_{wf}}\right)}-0.5 + S\right]}
+    \quad \text{STB/d/psi}
 \end{equation}
-Where $q_{liq}$ is the liquid flow rate in STB/d, $\bar{p}$ is the average reservoir pressure, $p_{wf}$ is the bottom hole flowing pressure (psi), $k$ is the permeability in mD, $h$ is the thickness of the reservoir in ft, $B_o$ is the oil formation volume factor (RB/STB), $\mu_o$ is the oil viscosity (cP), $r_e$ is the drainage radius (ft), $r_{wf}$ is the wellbore radius (ft) and $S$ is the skin factor.
-The reservoir properties are given in Table \ref{tab:reservoir_properties}.
-
-% =============================================================
-%  RESERVOIR & FLUID PROPERTIES TABLE
-%  Drop this block into any section file, e.g. 03_procedure.tex
-%  Requires: booktabs, siunitx (add to main.tex preamble)
-% =============================================================
-
-% Add to main.tex preamble if not already present:
-% \usepackage{booktabs}
-% \usepackage{siunitx}
+where $q_{liq}$ is the liquid flow rate in STB/d, $\bar{p}$ is the average
+reservoir pressure, $p_{wf}$ is the bottomhole flowing pressure (psi), $k$ is
+the permeability in mD, $h$ is the net pay thickness in ft, $B_o$ is the oil
+formation volume factor (RB/STB), $\mu_o$ is the oil viscosity (cP), $r_e$ is
+the drainage radius (ft), $r_{wf}$ is the wellbore radius (ft), and $S$ is the
+skin factor \cite{Craft1991}.
+The reservoir properties are given in Table~\ref{tab:reservoir_properties}.
 
 \begin{table}[htbp]
     \centering
@@ -62,73 +57,105 @@ The reservoir properties are given in Table \ref{tab:reservoir_properties}.
         Formation volume factor  & $B_o$       & 1.2           & RB/STB @ $P_b$ \\
         \midrule
         \multicolumn{4}{l}{\textit{Production Constraints}} \\
-        Maximum rroduction rate & $q_{\max}$   & 45,000        & STB/d         \\
-        Number of production wells          & $N_{wells}$   & 7             & --            \\
-        Minimum wellhead pressure & $P_{wh,\min}$  & 1200          & psia          \\
+        Maximum production rate & $q_{\max}$   & 45,000        & STB/d         \\
+        Number of production wells & $N_{wells}$ & 7            & --            \\
+        Minimum wellhead pressure & $P_{wh,\min}$ & 1200        & psia          \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-It was stated that the drilling and completion costs are highly sensitive to the wellbore radius ($r_{wf}$). So, first, we should
-try to finde the minimum tubing size that allows to produce the maximum flow rate for each development scenario. The maximum flow rate per well 
-was defined as $q_{\max} / N_{wells}$, which is 6428.57 STB/d. The Figure \ref{fig:pi_x_radii} shows the relationship between the Productivity Index and the wellbore radius for the given reservoir and fluid properties.
-From the plot, it is observed that the PI range is between 5.5 and 6.0 STB/d/psi for a casing OD between 4.5 and 7.75 inches (9\% improvement) but the difference between the 7 and 7.75 inches is only 0.1 STB/d/psi (1.7\% improvement). 
+It was stated that the drilling and completion costs are highly sensitive to the
+wellbore radius ($r_{wf}$). Therefore, the first step was to find the minimum
+tubing size that allows producing the maximum flow rate for each development
+scenario. The maximum flow rate per well was defined as $q_{\max} / N_{wells}$,
+which is 6,428.57~STB/d. Figure~\ref{fig:pi_x_radii} shows the relationship
+between the Productivity Index and the wellbore radius for the given reservoir
+and fluid properties \cite{Craft1991}.
+From the plot, it is observed that the PI range is between 5.5 and
+6.0~STB/d/psi for a casing OD between 4.5 and 7.75~inches (9\% improvement),
+but the difference between the 7 and 7.75~inch cases is only 0.1~STB/d/psi
+(1.7\% improvement).
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/pi_vs_radius.png}
     \caption{Productivity Index vs. Wellbore Radius}
     \label{fig:pi_x_radii}
 \end{figure}
-It was also assumed that the tubing size should be $0.8 r_{wf}$. The Figure \ref{fig:pi_x_tubing_radius} shows the relationship between the Productivity Index and the tubing internal diameter. Because the PI is just a function of the wellbore radius, the plot is the same as in Figure \ref{fig:pi_x_radii}, but with a different x-axis. 
+It was also assumed that the tubing size should be $0.8\,r_{wf}$.
+Figure~\ref{fig:pi_x_tubing_radius} shows the relationship between the
+Productivity Index and the tubing internal diameter. Because the PI is a
+function of the wellbore radius only, the plot has the same shape as
+Figure~\ref{fig:pi_x_radii} but with a different x-axis.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/pi_vs_tubing_radius.png}
-    \caption{Productivity Index vs. Tubing Radius}
+    \caption{Productivity Index vs. Tubing Internal Diameter}
     \label{fig:pi_x_tubing_radius}
 \end{figure}
 
-It was adivised that the asphaltene precipitation occurs at a pressure of 1100 psis, so the minimum wellhead pressure should be at least 1200 psia. 
-A wellbore model of Well 1 was created using Pipesim and the impact of tubing ID was evaluated. The results are shown in Figure \ref{fig:well1_q_x_tubing_radius}. It can be observed that the flow rate is higher than the maximum allowed for tubing sizes greater or equal to 2.922 inches. 
+It was advised that asphaltene precipitation occurs at a pressure of 1,100~psia,
+so the minimum wellhead pressure should be at least 1,200~psia.
+A wellbore model of Well~1 was created using \emph{PIPESIM} \cite{Schlumberger2023}
+and the impact of tubing ID was evaluated. The results are shown in
+Figure~\ref{fig:well1_q_x_tubing_radius}. It can be observed that the flow rate
+exceeds the maximum allowed for tubing sizes greater than or equal to 2.922~inches.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/rate_vs_tubing_id.png}
-    \caption{Flow Rate vs. Tubing Radius for Well 1}
+    \caption{Flow Rate vs. Tubing Internal Diameter for Well~1}
     \label{fig:well1_q_x_tubing_radius}
 \end{figure}
-The minimum tubing ID that allows to produce the maximum flow rate was 2.922 inches, which corresponds to a tubing OD of 3.5 inches. Because it is necessary to have as least 1 inch of annular space between the tubing and the casing, the minimum casing ID should be 5.5 inches. 
-A 5.5 ID casing corresponds to a 6.625 inches OD casing. In our project, we decided to use a 7 inches OD casing due to the best productivity index and the fact that it is a common casing size. A larger casing size would not be justified because the improvement in the productivity index is not significant and it would increase the drilling and completion costs.
-The production forecast predicts the water cut will improve and it was necessary to evaluate the impact of water cut on the flow rate. The results are shown in Figure \ref{fig:well1_q_x_water_cut}. It can be observed that the well rate does not produce the maximum allowed flow rate for a water cut higher than 10\%. 
+The minimum tubing ID that allows producing the maximum flow rate was 2.922~inches,
+which corresponds to a tubing OD of 3.5~inches. Because at least 1~inch of annular
+space is required between the tubing and the casing, the minimum casing ID should
+be 5.5~inches. A 5.5~in ID casing corresponds to a 6.625~in OD casing. A 7~in OD
+casing was selected in this project due to the improved productivity index and its
+status as a common casing size \cite{Craft1991}. A larger casing size would not be
+justified because the improvement in productivity index is not significant and would
+increase drilling and completion costs.
+
+The production forecast predicts that water cut will increase over time, and it was
+therefore necessary to evaluate the impact of water cut on the flow rate. The results
+are shown in Figure~\ref{fig:well1_q_x_water_cut}. It can be observed that the well
+does not produce the maximum allowed flow rate for water cuts higher than 10\%.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/rate_vs_watercut.png}
-    \caption{Flow Rate vs. Water Cut for Well 1}
+    \caption{Flow Rate vs. Water Cut for Well~1}
     \label{fig:well1_q_x_water_cut}
 \end{figure}
-So, for a water cut higher than 10\%, the maximum liquid rate is not achieved, and it is necessary to implement artificial lift. 
-The only artificial lift option available is the gas-lift. The gas-lift rate was evaluated for different water cuts and the results are shown in Figure \ref{fig:well1_gas_lift_rate_x_water_cut}. 
-It is observed that the minimum gas-lift rate that allows to produce the maximum liquid rate for all water cuts is 1.5 MMscf/d. 
+For water cuts higher than 10\%, the maximum liquid rate is not achieved and it is
+necessary to implement artificial lift. The only artificial lift option available is
+gas-lift \cite{Lea2008}. The gas-lift rate was evaluated for different water cuts
+and the results are shown in Figure~\ref{fig:well1_gas_lift_rate_x_water_cut}.
+It is observed that the minimum gas-lift rate that allows producing the maximum
+liquid rate across all water cuts is 1.5~MMscf/d.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/rate_vs_gas_lift.png}
-    \caption{Gas-Lift Rate and Water Cut vs. Liquid Rate for Well 1}
+    \caption{Gas-Lift Rate and Water Cut vs. Liquid Rate for Well~1}
     \label{fig:well1_gas_lift_rate_x_water_cut}
 \end{figure}
-It was also analyzed the impact of the gas-lift rate and water cut on the wellhead temperature. The results are shown in Figure \ref{fig:well1_q_x_gas_lift_and_temp}. 
-It was not informed the minimum wellhead temperature, but for this configuration, the wellhead temperature is above 173$^\circ$F for all water cuts and gas-lift rates.
+The impact of gas-lift rate and water cut on the wellhead temperature was also
+analyzed. The results are shown in Figure~\ref{fig:well1_q_x_gas_lift_and_temp}.
+The minimum wellhead temperature was not specified, but for this configuration the
+wellhead temperature is above 173$^\circ$F for all water cuts and gas-lift rates.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/rate_vs_gas_lift_and_temp.png}
-    \caption{Wellhead Temperature vs. Gas-Lift Rate and Water Cut for Well 1}
+    \caption{Wellhead Temperature vs. Gas-Lift Rate and Water Cut for Well~1}
     \label{fig:well1_q_x_gas_lift_and_temp}
 \end{figure}
 
-Using Pipesim was used to find the Wellhead Pressure (WHP) for different water cuts and gas-lift rates. The results are shown in Figure \ref{fig:well1_whp_x_gas_lift_and_water_cut}. 
+\emph{PIPESIM} \cite{Schlumberger2023} was used to find the Wellhead Pressure (WHP)
+for different water cuts and gas-lift rates. The results are shown in
+Figure~\ref{fig:well1_whp_x_gas_lift_and_water_cut}.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/pressure_vs_gas_lift.png}
-    \caption{Wellhead Pressure vs. Gas-Lift Rate and Water Cut for Well 1}
+    \caption{Wellhead Pressure vs. Gas-Lift Rate and Water Cut for Well~1}
     \label{fig:well1_whp_x_gas_lift_and_water_cut}
-\end{figure}    
+\end{figure}
 
 
 % ----- Section 2.2 -------------------------------------------
@@ -141,16 +168,17 @@ Using Pipesim was used to find the Wellhead Pressure (WHP) for different water c
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{figs/Pipeline Design.png}
-    \caption{PIPESIM pipeline network model for the m2--LOP corridor.}
+    \caption{\emph{PIPESIM} pipeline network model for the M2--LOP corridor.}
     \label{fig:pipeline_design}
 \end{figure}
 
 To model the subsea pipeline independently from the well network, the pipeline
-was treated as a mass-to-pressure boundary condition system. The inlet
-conditions at manifold~2 (m2) were derived from the well-level PIPESIM
-simulations carried out in Part~1.1 (Question~I-6), assuming all seven wells
-behave identically to W1. Because gas-lift injection gas flows through the
-pipeline, the effective pipeline GOR was computed as:
+was treated as a mass-to-pressure boundary condition system \cite{Bai2005}. The
+inlet conditions at manifold~2 (M2) were derived from the well-level
+\emph{PIPESIM} \cite{Schlumberger2023} simulations carried out in Part~1
+(Question~I-6), assuming all seven wells behave identically to W1. Because
+gas-lift injection gas flows through the pipeline, the effective pipeline GOR
+was computed as:
 
 \begin{equation}
     \text{GOR}_{\text{pipeline}} = \text{GOR}_{\text{sat}} +
@@ -167,7 +195,8 @@ are summarised in Table~\ref{tab:bc_pipeline}.
 \label{tab:bc_pipeline}
 \begin{tabular}{cccc}
 \toprule
-WC (\%) & GOR\textsubscript{pipeline} (scf/STB) & WHT (°F) & $q_{\text{liq}}$ (STB/d) \\
+WC (\%) & GOR\textsubscript{pipeline} (scf/STB) & WHT ($^\circ$F) &
+$q_{\text{liq}}$ (STB/d) \\
 \midrule
 2  & 800     & 173.9 & 45{,}000 \\
 5  & 800     & 175.2 & 45{,}000 \\
@@ -182,14 +211,14 @@ WC (\%) & GOR\textsubscript{pipeline} (scf/STB) & WHT (°F) & $q_{\text{liq}}$ (
 
 \subsubsection{Diameter Selection}
 
-A PIPESIM network model was constructed with a source node representing
-the combined well output at m2, a single flowline following the 14-point
-bathymetric survey of the m2--LOP corridor (total length 46{,}617~ft, maximum
-riser depth 3{,}000~ft), and a sink set at the separator pressure of 350~psia.
-Black-oil fluid properties (API~45, GOR~800~scf/STB, $\mu_o = 0.902$~cp,
-$B_o = 1.2$) were assigned. The worst-case watercut scenario (WC~=~2\%) was
-used for diameter screening, as it produced the highest inlet pressure for a
-given diameter.
+A \emph{PIPESIM} \cite{Schlumberger2023} network model was constructed with a
+source node representing the combined well output at M2, a single flowline
+following the 14-point bathymetric survey of the M2--LOP corridor (total length
+46{,}617~ft, maximum riser depth 3{,}000~ft), and a sink set at the separator
+pressure of 350~psia. Black-oil fluid properties (API~45, GOR~800~scf/STB,
+$\mu_o = 0.902$~cp, $B_o = 1.2$) were assigned \cite{Standing1977}. The
+worst-case watercut scenario (WC~=~2\%) was used for diameter screening, as it
+produced the highest inlet pressure for a given diameter.
 
 Four candidate internal diameters were evaluated against the maximum allowable
 wellhead pressure (WHP) constraint of 1{,}200~psia:
@@ -212,9 +241,9 @@ Diameter (in) & Inlet Pressure (psia) & Selected \\
 
 A 10-inch internal diameter was selected: it is the smallest diameter whose
 inlet pressure (1{,}040~psia) satisfies the 1{,}200~psia WHP constraint with
-adequate margin, while avoiding the unnecessary capital cost of a 12-inch
-line. Figure~\ref{fig:q3_diameter} illustrates the monotonic decrease in
-inlet pressure with increasing diameter.
+adequate margin, while avoiding the unnecessary capital cost of a 12-inch line
+\cite{Bai2005}. Figure~\ref{fig:q3_diameter} illustrates the monotonic decrease
+in inlet pressure with increasing diameter.
 
 \begin{figure}[htbp]
     \centering
@@ -226,12 +255,11 @@ inlet pressure with increasing diameter.
 \end{figure}
 
 \paragraph{Reduced-production verification.}
-The company requires the pipeline to remain operable when three wells go
-offline simultaneously (i.e.\ 4~wells, $q_{\text{liq}} = 25{,}714$~STB/d).
+The company requires the pipeline to remain operable when three wells go offline
+simultaneously (i.e.\ 4~wells, $q_{\text{liq}} = 25{,}714$~STB/d).
 Under these conditions the 10-inch line yields an inlet pressure of only
 605~psia, well below the 1{,}200~psia limit, confirming operability under
-reduced production. Figure~\ref{fig:q3_wells} compares the two operating
-cases.
+reduced production. Figure~\ref{fig:q3_wells} compares the two operating cases.
 
 \begin{figure}[htbp]
     \centering
@@ -244,11 +272,10 @@ cases.
 
 \subsubsection{Inlet Pressure vs.\ Water Cut}
 
-With the 10-inch diameter fixed, sensitivity runs were performed across the
-full watercut range. Table~\ref{tab:q4_results} and
-Figure~\ref{fig:q4_pressure} show that the pipeline inlet pressure is
-\emph{not} constant: it decreases monotonically from 1{,}040~psia at WC~=~2\%
-to 785~psia at WC~=~95\%.
+With the 10-inch diameter fixed, sensitivity runs were performed across the full
+watercut range. Table~\ref{tab:q4_results} and Figure~\ref{fig:q4_pressure} show
+that the pipeline inlet pressure is \emph{not} constant: it decreases
+monotonically from 1{,}040~psia at WC~=~2\% to 785~psia at WC~=~95\%.
 
 \begin{table}[htbp]
 \centering
@@ -273,25 +300,24 @@ WC (\%) & Inlet $P$ (psia) & Outlet $T$ (\textdegree F) \\
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{figs/pressure_vs_watercut.png}
-    \caption{Pipeline inlet pressure vs.\ watercut (10-inch diameter,
-             7~wells). The inlet pressure decreases with increasing watercut
-             due to the lower mixture density and reduced frictional losses at
-             higher water fractions. All cases remain below the 1{,}200~psia
-             WHP limit.}
+    \caption{Pipeline inlet pressure vs.\ watercut (10-inch diameter, 7~wells).
+             The inlet pressure decreases with increasing watercut due to the
+             lower mixture density and reduced frictional losses at higher water
+             fractions. All cases remain below the 1{,}200~psia WHP limit.}
     \label{fig:q4_pressure}
 \end{figure}
 
 The pressure decrease with watercut arises primarily because higher water
 fractions reduce the in-situ GOR, lowering the mixture compressibility and
-frictional pressure drop along the riser. To ensure the wellhead pressure is
-maintained at or above 1{,}200~psia under all conditions, a choke or
-back-pressure control valve could be installed downstream; however, this would
-modify the effective pressure boundary condition and may require an iterative
-update of the well-model boundary conditions.
+frictional pressure drop along the riser \cite{BeggsBrill1973}. To ensure the
+wellhead pressure is maintained at or above 1{,}200~psia under all conditions,
+a choke or back-pressure control valve could be installed downstream; however,
+this would modify the effective pressure boundary condition and may require an
+iterative update of the well-model boundary conditions.
 
-Figure~\ref{fig:q4_temp} shows the corresponding outlet temperatures, which
-all exceed the Wax Appearance Temperature (WAT) of 100\textdegree F for the
-7-well full-production case---a finding revisited in the following section.
+Figure~\ref{fig:q4_temp} shows the corresponding outlet temperatures, which all
+exceed the Wax Appearance Temperature (WAT) of 100\textdegree F for the 7-well
+full-production case, a finding revisited in the following section.
 
 \begin{figure}[htbp]
     \centering
@@ -305,12 +331,12 @@ all exceed the Wax Appearance Temperature (WAT) of 100\textdegree F for the
 \subsubsection{Thermal Analysis and Insulation Design}
 
 \paragraph{Worst-case scenario identification.}
-The thermal analysis was repeated for the 4-well reduced-production case
-with 1~inch of insulation ($k = 0.2$~Btu/(h$\cdot$\textdegree F$\cdot$ft))
-across all watercut scenarios. Figure~\ref{fig:q5_temp_wc} shows that outlet
-temperatures fall below the WAT of 100\textdegree F at low watercuts. The
-worst case is WC~=~2\%, 4~wells, which yields an outlet temperature of only
-86.98\textdegree F---significantly below WAT, posing a wax deposition risk.
+The thermal analysis was repeated for the 4-well reduced-production case with
+1~inch of insulation ($k = 0.2$~Btu/(h$\cdot$\textdegree F$\cdot$ft)) across
+all watercut scenarios \cite{Bai2005}. Figure~\ref{fig:q5_temp_wc} shows that
+outlet temperatures fall below the WAT of 100\textdegree F at low watercuts.
+The worst case is WC~=~2\%, 4~wells, which yields an outlet temperature of only
+86.98\textdegree F, significantly below WAT, posing a wax deposition risk.
 
 \begin{figure}[htbp]
     \centering
@@ -324,8 +350,8 @@ worst case is WC~=~2\%, 4~wells, which yields an outlet temperature of only
 
 \paragraph{Insulation thickness selection.}
 Insulation thickness was iterated for the worst-case condition
-(WC~=~2\%, 4~wells). The results are summarised in
-Table~\ref{tab:insulation} and Figure~\ref{fig:q5_insulation}.
+(WC~=~2\%, 4~wells). The results are summarised in Table~\ref{tab:insulation}
+and Figure~\ref{fig:q5_insulation}.
 
 \begin{table}[htbp]
 \centering
@@ -352,42 +378,57 @@ Insulation Thickness (in) & Outlet $T$ (\textdegree F) & Above WAT? \\
     \label{fig:q5_insulation}
 \end{figure}
 
-A minimum insulation thickness of \textbf{2~inches} is therefore specified
-for the pipeline. This ensures that even under the most thermally demanding
-condition---low watercut and reduced well count---the fluid temperature at
-the LOP exceeds the WAT of 100\textdegree F, preventing wax deposition and
+A minimum insulation thickness of \textbf{2~inches} is therefore specified for
+the pipeline \cite{Bai2005}. This ensures that even under the most thermally
+demanding condition, low watercut and reduced well count, the fluid temperature
+at the LOP exceeds the WAT of 100\textdegree F, preventing wax deposition and
 maintaining flow assurance throughout the field life.
 
 \subsection{Production Profile and Short Economic Analysis}
+\label{subsec:econ}
 
-In this section the analysis was made just for Well 1. Because the production forecast predicts a water cut improvement, the system analysis should be made for different water cuts, since the flow conditions and necessary gas-lift rate will change with the water cut.
-The water cut forecast for Well 1is shown in Figure \ref{fig:water_cut_forecast}. The water cut is in function of cumulative oil production, starting at 2\% and improving to 95\% at the end of the forecast period. 
+In this section the analysis was performed for Well~1 only. Because the
+production forecast predicts increasing water cut, the system analysis was
+performed for different water cut scenarios, since the flow conditions and
+required gas-lift rate change accordingly.
+The water cut forecast for Well~1 is shown in Figure~\ref{fig:water_cut_forecast}.
+The water cut is a function of cumulative oil production, starting at 2\% and
+increasing to 95\% at the end of the forecast period.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/water_cut_forecast.png}
-    \caption{Water Cut Forecast for Well 1}
+    \caption{Water Cut Forecast for Well~1}
     \label{fig:water_cut_forecast}
 \end{figure}
-For the production forecast, it was assumed that the well will produce at the maximum allowed flow rate for all water cuts, which is 6428.57 STB/d. The production profile for Well 1 is shown in Figure \ref{fig:production_profile}.
+For the production forecast, it was assumed that the well will produce at the
+maximum allowed flow rate for all water cuts, which is 6,428.57~STB/d. The
+production profile for Well~1 is shown in Figure~\ref{fig:production_profile}.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/production_profile.png}
-    \caption{Production Profile for Well 1}
+    \caption{Production Profile for Well~1}
     \label{fig:production_profile}
 \end{figure}
-For the required gas-lift rate, it was used the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut} to find the necessary gas-lift rate for each water cut. The gas-lift rate profile for Well 1 is shown in Figure \ref{fig:gas_lift_profile}. For values that are not in the original plot, it was used linear interpolation to find the necessary gas-lift rate. 
+The required gas-lift rate for each water cut was determined using the results
+from Figure~\ref{fig:well1_gas_lift_rate_x_water_cut} \cite{Lea2008}. The
+gas-lift rate profile for Well~1 is shown in Figure~\ref{fig:gas_lift_profile}.
+For water cut values not directly available in the original plot, linear
+interpolation was used.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/gas_lift_profile.png}
-    \caption{Gas-Lift Rate Profile for Well 1}
+    \caption{Gas-Lift Rate Profile for Well~1}
     \label{fig:gas_lift_profile}
 \end{figure}
-It was required to verify the network operating conditions for different water cuts, 5\%, 40\% and 80\%. For each of these water cuts, the necessary gas-lift rate was found using the results from Figure \ref{fig:well1_gas_lift_rate_x_water_cut}. The results are shown in Table \ref{tab:network_conditions}.
+The network operating conditions were verified for water cuts of 5\%, 40\%, and
+80\%. For each case, the necessary gas-lift rate was found using the results from
+Figure~\ref{fig:well1_gas_lift_rate_x_water_cut}. The results are shown in
+Table~\ref{tab:network_conditions}.
 \begin{table}[htbp]
     \centering
     \caption{Network Operating Conditions for Different Water Cuts}
     \label{tab:network_conditions}
-    \begin{tabular}{l c }
+    \begin{tabular}{l c}
         \toprule
         \textbf{Water Cut} & \textbf{Gas-Lift Rate (MMscf/d)} \\
         \midrule
@@ -398,8 +439,10 @@ It was required to verify the network operating conditions for different water c
     \end{tabular}
 \end{table}
 
-A network was created in Pipesim to evaluate each operating condition. The network consists of the 7 production wells and three manifolds. The total production is collect in the manifold M2. 
-The Figure~\ref{fig:network_configuration} shows the network configuration. 
+A network was created in \emph{PIPESIM} \cite{Schlumberger2023} to evaluate each
+operating condition. The network consists of the 7 production wells and three
+manifolds, with total production collected at manifold M2.
+Figure~\ref{fig:network_configuration} shows the network configuration.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/network_config.png}
@@ -407,11 +450,20 @@ The Figure~\ref{fig:network_configuration} shows the network configuration.
     \label{fig:network_configuration}
 \end{figure}
 
-The network was evaluated for 7 and 4 operating wells. It was observed that only with the 4 wells operating, it is not possible to achieve the maximum flow rate and maintain the minimum operating pressure. So, for the cases where the number of operating
-wells is 4, the boundary condition for the sink was changed to a total flow rate equal to 25715 STB/d (this is equivalent to the combined maximum flow rate of the 4 wells). This way, the minimum operating pressure is achieved for all water cut scenarios.
+The network was evaluated for 7 and 4 operating wells. It was observed that with
+only 4 wells operating, it is not possible to achieve the maximum flow rate and
+maintain the minimum operating pressure. For the 4-well cases, the boundary
+condition for the sink was therefore changed to a total flow rate of
+25,715~STB/d, corresponding to the combined maximum flow rate of the 4 wells.
+This ensures the minimum operating pressure is achieved for all water cut
+scenarios.
 
-The figure Figure~\ref{fig:network_pressure} shows the pressure observed in the manifold M2 for different water cuts and number of operating wells. The same analyis is made for the temperature, and the results are shown in Figure~\ref{fig:network_temperature}.
-From the results, it is observed that the pressure varies but it is always above the minimum operating pressure of 1100 psia. The temperature is always low for the 4 wells operating scenario, but it is always above 170 $^\circ$F in all cases. 
+Figure~\ref{fig:network_pressure} shows the pressure at manifold M2 for
+different water cuts and numbers of operating wells. The same analysis was
+performed for temperature, with results shown in
+Figure~\ref{fig:network_temperature}. The pressure varies but remains above the
+minimum operating pressure of 1,100~psia in all cases. The temperature is lower
+for the 4-well scenario but remains above 170$^\circ$F in all cases.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/network_pressure_behaviour.png}
@@ -427,37 +479,54 @@ From the results, it is observed that the pressure varies but it is always above
 
 \subsection*{Economic Analysis}
 
-For the short economic analysis it was considered the production forecast for Well 1, presented in Figure~\ref{fig:production_profile}, and the necessary gas-lift rate, presented in Figure~\ref{fig:gas_lift_profile} and the necessary gas-lift pressure 
-shown in Figure~\ref{fig:well1_whp_x_gas_lift_and_water_cut}. It was assumed two oil sales price: 50 \$/BBL and 30 \$/BBL. The initially assumed costs 
-for water treatment and gas-lift injection were 1 $\$/\text{STB}$ and 1 $\$/\text{MMScf} \times \text{psi}$, respectively. But it was observed that using these
-costs there was no water cut values that makes the production not economic viable. For this reason, a sensitivity analysis was made for the
-water treatment cost and the gas-lift injection cost. The results are shown in Figure~\ref{fig:break_even_50} and Figure~\ref{fig:break_even_30} for the oil price of 50 \$/BBL and 30 \$/BBL, respectively.
-Using the original costs, the break-even water cut is above 95\% for both oil prices. So, for the purpose of the comparison of both scenarios, 
-it was decided to use a water treatment cost of 5 $\$/\text{STB}$ and a gas-lift injection cost of 5 $\$/\text{MMScf} \times \text{psi}$, which gives a break-even water cut of around 86\% for the oil price of 50 \$/BBL and around 78\% for the oil price of 30 \$/BBL.
+For the short economic analysis, the production forecast for Well~1 presented in
+Figure~\ref{fig:production_profile}, the gas-lift rate presented in
+Figure~\ref{fig:gas_lift_profile}, and the gas-lift pressure shown in
+Figure~\ref{fig:well1_whp_x_gas_lift_and_water_cut} were used. Two oil sales
+prices were considered: 50~\$/BBL and 30~\$/BBL. The initially assumed costs for
+water treatment and gas-lift injection were 1~\$/STB and
+1~\$/MMScf$\times$psi, respectively. However, using these costs, no water cut
+value made production uneconomical. A sensitivity analysis was therefore
+performed for both cost parameters. The results are shown in
+Figures~\ref{fig:break_even_50} and~\ref{fig:break_even_30} for oil prices of
+50~\$/BBL and 30~\$/BBL, respectively.
+Using the original costs, the break-even water cut is above 95\% for both oil
+prices. For the purpose of comparing both scenarios, a water treatment cost of
+5~\$/STB and a gas-lift injection cost of 5~\$/MMScf$\times$psi were adopted,
+giving a break-even water cut of approximately 86\% for the 50~\$/BBL case and
+approximately 78\% for the 30~\$/BBL case.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/break_even_50.png}
-    \caption{Break-even Water Cut for Different Water Treatment and Gas-Lift Costs (Oil Price = 50 \$/BBL)}
+    \caption{Break-even Water Cut for Different Water Treatment and Gas-Lift
+             Costs (Oil Price = 50~\$/BBL)}
     \label{fig:break_even_50}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/break_even_30.png}
-    \caption{Break-even Water Cut for Different Water Treatment and Gas-Lift Costs (Oil Price = 30 \$/BBL)}
+    \caption{Break-even Water Cut for Different Water Treatment and Gas-Lift
+             Costs (Oil Price = 30~\$/BBL)}
     \label{fig:break_even_30}
 \end{figure}
 
 \subsection*{Optimization of Operating Conditions}
 
-It is possible to optimize the operating conditions for each water cut scenario to maximize the net profit. The net profit is given by the difference between the revenue and the costs. The revenue is given by the product of the oil sale price and the oil production, while the costs are given by the sum of the water treatment cost and the gas-lift injection cost.
-The optimization process was made using a simple algorithm that evaluates the net profit for different gas-lift rates. This way, the well will produce at a flow rate less than the maximum allowed, but it will be more profitable. 
-The implemented algorithm is shown in the following pseudocode. This process was applied for the two oil price scenarios and the same water treatment and gas-lift injection costs used in the previous sensitivity analysis. 
+It is possible to optimize the operating conditions for each water cut scenario
+to maximize the net profit \cite{Lea2008}. The net profit is given by the
+difference between the revenue and the costs. The revenue is the product of the
+oil sale price and the oil production, while the costs are the sum of the water
+treatment cost and the gas-lift injection cost.
+The optimization process used a simple algorithm that evaluates the net profit
+for different gas-lift rates, implemented in Python \cite{VanRossum2009}. This
+way, the well produces at a flow rate below the maximum allowed but at a more
+profitable operating point. The implemented algorithm is shown in the following
+pseudocode.
 
 \begin{algorithm}
 \caption{Optimization of Operating Conditions}
 \begin{algorithmic}[1]
-% \State Initialize water cut scenarios and corresponding production profiles
 \For{each day in the production forecast}
     \State Get current water cut and corresponding production profile
     \State Initialize variables to store optimal gas-lift rate and maximum net profit
@@ -465,7 +534,7 @@ The implemented algorithm is shown in the following pseudocode. This process was
         \State Calculate oil production based on current water cut and gas-lift rate
         \State Calculate revenue = oil sale price $\times$ oil production
         \State Calculate costs = water treatment cost + gas-lift injection cost
-        \State Calculate net profit = revenue - costs
+        \State Calculate net profit = revenue $-$ costs
         \If{net profit > maximum net profit}
             \State Update maximum net profit and optimal gas-lift rate
         \EndIf
@@ -475,69 +544,79 @@ The implemented algorithm is shown in the following pseudocode. This process was
 \end{algorithmic}
 \end{algorithm}
 
-\subsection*{Optimization for 50 \$/BBL Oil Price}
+\subsection*{Optimization for 50~\$/BBL Oil Price}
 
-The production cost history and water cut for is shown in Figure~\ref{cost_history_50}, showing the number of productions days
-where the production costs exceed the oil sale price. The optimal gas-lift rate for each day is shown in Figure~\ref{optimal_gas_lift_50}.
-The new forecast production profile is shown in Figure~\ref{optimized_production_50}, and the comparison between the original and optimized oil production is shown in Figure~\ref{production_comparison_50}.
-For the non optimized case, the limit days in production is reached at day 14512 and for the optimized case the economic production is achieved for all 
-the forecast period. 
+The production cost history and water cut are shown in
+Figure~\ref{cost_history_50}, indicating the number of production days where
+costs exceed the oil sale price. The optimal gas-lift rate for each day is shown
+in Figure~\ref{optimal_gas_lift_50}. The new forecast production profile is shown
+in Figure~\ref{optimized_production_50}, and a comparison between the original
+and optimized oil production is shown in Figure~\ref{production_comparison_50}.
+For the non-optimized case, the economic limit is reached at day 14,512; for the
+optimized case, economic production is maintained for the full forecast period.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/cost_history_50.png}
-    \caption{Production Cost History and Water Cut for 50 \$/BBL Oil Price}
+    \caption{Production Cost History and Water Cut for 50~\$/BBL Oil Price}
     \label{cost_history_50}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/optmized_gas_lift_50.png}
-    \caption{Optimal Gas-Lift Rate for 50 \$/BBL Oil Price}
+    \caption{Optimal Gas-Lift Rate for 50~\$/BBL Oil Price}
     \label{optimal_gas_lift_50}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/optmized_production_50.png}
-    \caption{Optimized Production Profile for 50 \$/BBL Oil Price}
+    \caption{Optimized Production Profile for 50~\$/BBL Oil Price}
     \label{optimized_production_50}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/oil_production_comparison_50.png}
-    \caption{Comparison of Original and Optimized Production Profiles for 50 \$/BBL Oil Price}
+    \caption{Comparison of Original and Optimized Production Profiles for
+             50~\$/BBL Oil Price}
     \label{production_comparison_50}
 \end{figure}
 
-\subsection*{Optimization for 30 \$/BBL Oil Price}
-The production cost history and water cut for is shown in Figure~\ref{cost_history_30}, showing the number of productions days
-where the production costs exceed the oil sale price. The optimal gas-lift rate for each day is shown in Figure~\ref{optimal_gas_lift_30}.
-The new forecast production profile is shown in Figure~\ref{optimized_production_30}, and the comparison between the original and optimized oil production is shown in Figure~\ref{production_comparison_30}.
-For the non optimized case, the limit days in production is reached at day 9163 and for the optimized case the limit days in production is reached at day 19178. So the increment in production days
-is 10015 days, which is a significant improvement.
+\subsection*{Optimization for 30~\$/BBL Oil Price}
+
+The production cost history and water cut are shown in
+Figure~\ref{cost_history_30}. The optimal gas-lift rate for each day is shown in
+Figure~\ref{optimal_gas_lift_30}. The new forecast production profile is shown in
+Figure~\ref{optimized_production_30}, and a comparison between the original and
+optimized oil production is shown in Figure~\ref{production_comparison_30}.
+For the non-optimized case, the economic limit is reached at day 9,163; for the
+optimized case it is reached at day 19,178, an extension of 10,015 production
+days.
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/cost_history_30.png}
-    \caption{Production Cost History and Water Cut for 30 \$/BBL Oil Price}
+    \caption{Production Cost History and Water Cut for 30~\$/BBL Oil Price}
     \label{cost_history_30}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/optmized_gas_lift_30.png}
-    \caption{Optimal Gas-Lift Rate for 30 \$/BBL Oil Price}
+    \caption{Optimal Gas-Lift Rate for 30~\$/BBL Oil Price}
     \label{optimal_gas_lift_30}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/optmized_production_30.png}
-    \caption{Optimized Production Profile for 30 \$/BBL Oil Price}
+    \caption{Optimized Production Profile for 30~\$/BBL Oil Price}
     \label{optimized_production_30}
 \end{figure}
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.7\textwidth]{figs/oil_production_comparison_30.png}
-    \caption{Comparison of Original and Optimized Production Profiles for 30 \$/BBL Oil Price}
+    \caption{Comparison of Original and Optimized Production Profiles for
+             30~\$/BBL Oil Price}
     \label{production_comparison_30}
 \end{figure}
-
 
 \subsubsection{Pipeline Operational Issues and Mitigation}
 \label{subsubsec:pipeline_issues}
@@ -547,86 +626,108 @@ within constraints under the design conditions, but three operational issues
 warrant attention over the field life.
 
 \paragraph{Declining inlet pressure with increasing water cut.}
-As shown in Table~\ref{tab:q4_results}, the pipeline inlet pressure drops
-from 1{,}040~psia at WC~=~2\% to 785~psia at WC~=~95\%. Because the well
-network was sized to maintain a minimum wellhead pressure of 1{,}200~psia,
-this falling back-pressure at the manifold is beneficial for well
-deliverability. However, it also means the pipeline operates increasingly
-below its design inlet pressure, which changes the flow regime and mixture
-velocity over time. A back-pressure control valve at the LOP can be used to
-regulate separator inlet conditions and maintain stable flow.
+As shown in Table~\ref{tab:q4_results}, the pipeline inlet pressure drops from
+1{,}040~psia at WC~=~2\% to 785~psia at WC~=~95\%. Because the well network was
+sized to maintain a minimum wellhead pressure of 1{,}200~psia, this falling
+back-pressure at the manifold is beneficial for well deliverability. However, it
+also means the pipeline operates increasingly below its design inlet pressure,
+which changes the flow regime and mixture velocity over time \cite{BeggsBrill1973}.
+A back-pressure control valve at the LOP can be used to regulate separator inlet
+conditions and maintain stable flow.
 
 \paragraph{Wax deposition risk under reduced production.}
 At low watercut with only four wells online, the outlet temperature drops to
-86.98\textdegree F --- below the WAT of 100\textdegree F --- with 1~inch of
-insulation. This is the most critical flow assurance threat for this pipeline.
+86.98\textdegree F, below the WAT of 100\textdegree F, with 1~inch of insulation.
+This is the most critical flow assurance threat for this pipeline \cite{Bai2005}.
 The selected mitigation is 2~inches of insulation, which raises the outlet
-temperature to 107.5\textdegree F under worst-case conditions. During planned
-or unplanned well shutdowns, particularly at early field life when water cut is
-low, pigging should be scheduled regularly to remove any wax deposits that
-accumulate during transient cool-down periods before the pipeline reaches
-steady-state temperature.
+temperature to 107.5\textdegree F under worst-case conditions. During planned or
+unplanned well shutdowns, particularly at early field life when water cut is low,
+pigging should be scheduled regularly to remove any wax deposits that accumulate
+during transient cool-down periods before the pipeline reaches steady-state
+temperature.
 
 \paragraph{Slugging at high gas-oil ratio.}
-At high water cuts, the effective pipeline GOR increases substantially ---
-from 800~scf/STB at WC~=~2\% to 5{,}778~scf/STB at WC~=~95\% --- due to the
-accumulating gas-lift injection gas. The combination of a long flowline
-(46{,}617~ft), a 3{,}000~ft riser, and a high GOR creates conditions
-favorable for severe slugging at the base of the riser. A slug catcher at the
-LOP separator should be included in the facility design to handle the liquid
-surges associated with slug arrival, and gas-lift injection rates should be
-managed to avoid unnecessarily elevating the GOR beyond what is required for
-production optimization.
-
-
+At high water cuts, the effective pipeline GOR increases substantially, from
+800~scf/STB at WC~=~2\% to 5{,}778~scf/STB at WC~=~95\%, due to accumulating
+gas-lift injection gas. The combination of a long flowline (46{,}617~ft), a
+3{,}000~ft riser, and a high GOR creates conditions favorable for severe slugging
+at the base of the riser \cite{BeggsBrill1973}. A slug catcher at the LOP
+separator should be included in the facility design to handle the liquid surges
+associated with slug arrival, and gas-lift injection rates should be managed to
+avoid unnecessarily elevating the GOR beyond what is required for production
+optimization.
 
 % ----- Subsection 2 -------------------------------------------
 \section{Part 2}
 \label{sec:proc_phase2}
 
-
-In this section will be discused the implementation of network simulator and the results obtained from the simulations.
-The code was implemented in Python using Claude.ai as conding assistant. It was decided to make the subsurface and surface network in
-a integrated way, so the network simulator will be able to evaluate the impact of the surface network on the subsurface and vice versa.
-
-
+In this section the implementation of the network simulator and the results
+obtained from the simulations are discussed. The code was implemented in Python
+\cite{VanRossum2009} using an AI coding assistant. The subsurface and surface
+network were integrated so that the simulator evaluates the impact of the surface
+network on the subsurface and vice versa.
 
 \section{Code Structure and Module Interaction}
 
-The network simulator is organized as a set of modular Python files, where each file has a well-defined responsibility in the workflow. The code is divided into six main layers: input handling, fluid-property evaluation, multiphase pressure-drop models, physical network components, network solution, and visualization. This structure makes the simulator easier to validate, extend, and maintain.
+The network simulator is organized as a set of modular Python files
+\cite{VanRossum2009}, where each file has a well-defined responsibility in the
+workflow. The code is divided into six main layers: input handling,
+fluid-property evaluation, multiphase pressure-drop models, physical network
+components, network solution, and visualization. This structure makes the
+simulator easier to validate, extend, and maintain.
 
 \subsection{Overall Organization}
 
-The simulator is centered on the idea that each physical object in the production system is represented explicitly in code. Fluid properties are evaluated first, then attached to physical components such as wells and flowlines. These components are assembled into a network graph, and the solver iterates on rates and pressures until the boundary conditions are satisfied. Finally, the results are post-processed and visualized.
+The simulator is centered on the idea that each physical object in the
+production system is represented explicitly in code. Fluid properties are
+evaluated first, then attached to physical components such as wells and
+flowlines. These components are assembled into a network graph, and the solver
+iterates on rates and pressures until the boundary conditions are satisfied.
+Finally, the results are post-processed and visualized.
 
 \subsection*{\texttt{fluid\_correlations.py}}
 
-This module provides the fluid-property model used throughout the simulator. Its main class is \texttt{BlackOilFluid}, which stores the fluid description and computes all required black-oil PVT and transport properties. In particular, it includes:
+This module provides the fluid-property model used throughout the simulator.
+Its main class is \texttt{BlackOilFluid}, which stores the fluid description
+and computes all required black-oil PVT and transport properties
+\cite{Standing1977}. In particular, it includes:
 
 \begin{itemize}
-    \item solution gas--oil ratio, bubble-point pressure, and oil formation volume factor;
+    \item solution gas-oil ratio, bubble-point pressure, and oil formation
+          volume factor \cite{Standing1977};
     \item oil, gas, and water densities and viscosities;
-    \item gas compressibility factor using the Hall--Yarborough correlation;
-    \item in-situ liquid and gas volumetric rates needed by the flow correlations.
+    \item gas compressibility factor using the Hall-Yarborough correlation
+          \cite{HallYarborough1974};
+    \item in-situ liquid and gas volumetric rates needed by the flow
+          correlations.
 \end{itemize}
 
-Therefore, this module acts as the thermodynamic and transport-property foundation for all pressure-gradient calculations.
+This module acts as the thermodynamic and transport-property foundation for all
+pressure-gradient calculations.
 
 \subsection*{\texttt{multiphase\_correlations.py}}
 
-This module contains the pressure-gradient models used by the simulator. From the calls in the rest of the code, its role is to provide:
+This module contains the pressure-gradient models used by the simulator
+\cite{BeggsBrill1973,HagedornBrown1965}. Its role is to provide:
 
 \begin{itemize}
-    \item vertical-flow calculations through the Hagedorn--Brown correlation;
-    \item inclined-flow calculations through the Beggs--Brill correlation;
-    \item a dispatcher function, \texttt{get\_correlation(...)}, that chooses the appropriate correlation based on inclination angle, pipe diameter, fluid object, and roughness.
+    \item vertical-flow calculations through the Hagedorn-Brown correlation
+          \cite{HagedornBrown1965};
+    \item inclined-flow calculations through the Beggs-Brill correlation
+          \cite{BeggsBrill1973};
+    \item a dispatcher function, \texttt{get\_correlation(...)}, that chooses
+          the appropriate correlation based on inclination angle, pipe diameter,
+          fluid object, and roughness.
 \end{itemize}
 
-In the present architecture, this file is the hydraulic core of the simulator. It converts local rate, pressure, and geometry information into pressure gradients.
+In the present architecture, this file is the hydraulic core of the simulator.
+It converts local rate, pressure, and geometry information into pressure
+gradients.
 
 \subsection*{\texttt{survey\_reader.py}}
 
-This module is responsible for loading well trajectory data from external CSV files. It supports multiple survey formats, such as:
+This module is responsible for loading well trajectory data from external CSV
+files. It supports multiple survey formats, such as:
 
 \begin{itemize}
     \item measured depth and TVD only;
@@ -634,11 +735,18 @@ This module is responsible for loading well trajectory data from external CSV fi
     \item measured depth, TVD, and inclination together.
 \end{itemize}
 
-If one quantity is missing, the module reconstructs it using minimum-curvature-based inverse or forward calculations. The output is a list of \texttt{SurveyPoint} objects, which can be passed directly to the well model. This module isolates data ingestion from the rest of the simulator and makes the wellbore workflow independent of the original survey file format.
+If one quantity is missing, the module reconstructs it using
+minimum-curvature-based inverse or forward calculations \cite{Wolff1981}. The
+output is a list of \texttt{SurveyPoint} objects, which can be passed directly
+to the well model. This module isolates data ingestion from the rest of the
+simulator and makes the wellbore workflow independent of the original survey
+file format.
 
 \subsection*{\texttt{network\_components.py}}
 
-This module defines the physical components of the production network. It contains the objects that represent both the topology and the hydraulic elements of the system.
+This module defines the physical components of the production network. It
+contains the objects that represent both the topology and the hydraulic elements
+of the system.
 
 \subsubsection*{Node classes}
 
@@ -648,11 +756,13 @@ The code defines generic and specialized nodes such as:
     \item \texttt{Node}: general network junction;
     \item \texttt{ReservoirNode}: fixed-pressure upstream boundary;
     \item \texttt{SeparatorNode}: fixed-pressure downstream sink;
-    \item \texttt{FixedRateSink}: downstream sink constrained by total liquid rate;
+    \item \texttt{FixedRateSink}: downstream sink constrained by total liquid
+          rate;
     \item \texttt{ManifoldNode}: junction with no pressure drop.
 \end{itemize}
 
-These classes provide the boundary conditions and connection points for the network.
+These classes provide the boundary conditions and connection points for the
+network.
 
 \subsubsection*{Well trajectory and well model}
 
@@ -664,68 +774,103 @@ The module also defines:
     \item \texttt{Well}: the complete wellbore model.
 \end{itemize}
 
-The \texttt{WellSegment} class computes the true vertical depth increment using the minimum-curvature method. The \texttt{Well} class then chains all segments together to construct the total measured depth and total TVD of the well.
+The \texttt{WellSegment} class computes the true vertical depth increment using
+the minimum-curvature method \cite{Wolff1981}. The \texttt{Well} class then
+chains all segments together to construct the total measured depth and total TVD
+of the well.
 
-In addition, the \texttt{Well} class contains the inflow model. It automatically switches between a linear productivity-index relation and a Vogel-type inflow relation, depending on reservoir pressure relative to bubble-point pressure. It can evaluate either:
+In addition, the \texttt{Well} class contains the inflow model. It
+automatically switches between a linear productivity-index relation
+\cite{Craft1991} and a Vogel-type inflow relation \cite{Vogel1968}, depending
+on reservoir pressure relative to bubble-point pressure. It can evaluate either:
 \[
 q = f(p_{wf})
 \qquad \text{or} \qquad
 p_{wf} = f(q),
 \]
-which allows the well to be coupled directly to the tubing-pressure calculations.
+which allows the well to be coupled directly to the tubing-pressure
+calculations.
 
 \subsubsection*{Pressure-drop elements}
 
 For the outflow system, the module defines:
 
 \begin{itemize}
-    \item \texttt{FlowlinePipe}: a surface or subsea pipe represented by an elevation profile;
-    \item \texttt{Choke}: a pressure-drop element using either a Gilbert-type or \(C_v\)-based model;
+    \item \texttt{FlowlinePipe}: a surface or subsea pipe represented by an
+          elevation profile;
+    \item \texttt{Choke}: a pressure-drop element using either a Gilbert-type
+          \cite{Gilbert1954} or $C_v$-based model;
     \item \texttt{Manifold}: a zero-pressure-drop junction object.
 \end{itemize}
 
-The \texttt{FlowlinePipe} object discretizes the pipe according to the supplied elevation profile and marches pressure from inlet to outlet. For each segment, it calls \texttt{get\_correlation(...)} to select the hydraulic correlation according to inclination. Similarly, the \texttt{Well} object marches pressure from bottom hole to wellhead, subdividing the survey into smaller intervals for improved accuracy.
+The \texttt{FlowlinePipe} object discretizes the pipe according to the supplied
+elevation profile and marches pressure from inlet to outlet. For each segment,
+it calls \texttt{get\_correlation(...)} to select the hydraulic correlation
+according to inclination \cite{BeggsBrill1973,HagedornBrown1965}. Similarly,
+the \texttt{Well} object marches pressure from bottomhole to wellhead,
+subdividing the survey into smaller intervals for improved accuracy.
 
 \subsection*{\texttt{network\_solver.py}}
 
-This module defines the global solver through the \texttt{ProductionNetwork} class. It is responsible for assembling all components into a connected directed tree and computing the operating state of the full network.
+This module defines the global solver through the \texttt{ProductionNetwork}
+class. It is responsible for assembling all components into a connected directed
+tree and computing the operating state of the full network.
 
 \subsubsection*{Graph construction}
 
-The solver stores all nodes, wells, flowlines, chokes, and manifolds, then converts them into a graph representation with:
+The solver stores all nodes, wells, flowlines, chokes, and manifolds, then
+converts them into a graph representation with:
 
 \begin{itemize}
     \item downstream connectivity;
     \item upstream connectivity;
-    \item an edge map that links node pairs to the corresponding pipe or choke object.
+    \item an edge map that links node pairs to the corresponding pipe or choke
+          object.
 \end{itemize}
 
-This graph representation is used both for rate accumulation and for pressure marching.
+This graph representation is used both for rate accumulation and for pressure
+marching.
 
 \subsubsection*{Wellhead-performance logic}
 
-A key feature of the solver is that it recognizes that the wellhead-pressure curve \(WHP(q)\) can be non-monotonic in multiphase flow. At low rate, the heavy liquid column causes a low wellhead pressure; at intermediate rate, gas lightens the column and the wellhead pressure rises; at still higher rate, friction dominates and the wellhead pressure decreases again. The solver therefore identifies the stable, descending branch of the \(WHP(q)\) curve and performs bisection only on that branch.
+A key feature of the solver is that it recognizes that the wellhead-pressure
+curve $WHP(q)$ can be non-monotonic in multiphase flow \cite{BeggsBrill1973}.
+At low rate, the heavy liquid column causes a low wellhead pressure; at
+intermediate rate, gas lightens the column and the wellhead pressure rises; at
+still higher rate, friction dominates and the wellhead pressure decreases again.
+The solver therefore identifies the stable, descending branch of the $WHP(q)$
+curve and performs bisection only on that branch.
 
 \subsubsection*{Boundary-condition handling}
 
 The solver supports two main boundary-condition types:
 
 \begin{enumerate}
-    \item \textbf{Fixed-pressure sink:} the separator pressure is prescribed, and the rates are obtained from the coupling between inflow and tubing/outflow performance.
-    \item \textbf{Fixed-rate sink:} the total liquid rate is prescribed, and the solver determines the common wellhead pressure that makes the sum of the stable-branch well rates match the target throughput.
+    \item \textbf{Fixed-pressure sink:} the separator pressure is prescribed,
+          and the rates are obtained from the coupling between inflow and
+          tubing/outflow performance \cite{Craft1991}.
+    \item \textbf{Fixed-rate sink:} the total liquid rate is prescribed, and
+          the solver determines the common wellhead pressure that makes the sum
+          of the stable-branch well rates match the target throughput.
 \end{enumerate}
 
 \subsubsection*{Network pressure march}
 
-Once wellhead rates are known, the solver accumulates rates downstream through the graph and then marches pressures along flowlines and chokes. During this step, it also stores pressure-traverse profiles for later plotting.
+Once wellhead rates are known, the solver accumulates rates downstream through
+the graph and then marches pressures along flowlines and chokes. During this
+step, it also stores pressure-traverse profiles for later plotting.
 
 \subsubsection*{Nodal analysis utility}
 
-The same module also provides a helper function that generates IPR and OPR curves for a single well. This function is used later by the visualization layer to show the operating point in a classical nodal-analysis plot.
+The same module also provides a helper function that generates IPR and OPR
+curves for a single well \cite{Craft1991}. This function is used later by the
+visualization layer to show the operating point in a classical nodal-analysis
+plot.
 
 \subsection*{\texttt{plotting.py}}
 
-This module contains the post-processing and visualization tools. Its functions create figures for the main engineering outputs of the simulator, including:
+This module contains the post-processing and visualization tools. Its functions
+create figures for the main engineering outputs of the simulator, including:
 
 \begin{itemize}
     \item nodal analysis curves (\texttt{plot\_nodal\_analysis});
@@ -736,11 +881,13 @@ This module contains the post-processing and visualization tools. Its functions 
     \item a combined well dashboard (\texttt{plot\_well\_dashboard}).
 \end{itemize}
 
-These utilities are separate from the numerical core, which keeps the simulator structure clean and avoids mixing numerical algorithms with presentation logic.
+These utilities are separate from the numerical core, which keeps the simulator
+structure clean and avoids mixing numerical algorithms with presentation logic.
 
 \subsection*{\texttt{main\_wells.py}}
 
-The main script acts as the execution layer of the simulator. Although its full code is not reproduced here, its role in the present architecture is to:
+The main script acts as the execution layer of the simulator. Its role in the
+present architecture is to:
 
 \begin{itemize}
     \item create fluid objects;
@@ -751,8 +898,9 @@ The main script acts as the execution layer of the simulator. Although its full 
     \item request plots and organize the final outputs.
 \end{itemize}
 
-Thus, \texttt{main\_wells.py} is the entry point that connects the modules into a complete simulation workflow. 
-Figure~\ref{fig:code-architecture} shows how the modules interact during a typical simulation.
+Thus, \texttt{main\_wells.py} is the entry point that connects the modules into
+a complete simulation workflow. Figure~\ref{fig:code-architecture} shows how the
+modules interact during a typical simulation.
 
 \begin{figure}[htbp]
 \centering
@@ -776,27 +924,27 @@ Figure~\ref{fig:code-architecture} shows how the modules interact during a typic
 
 \node[box, below=of main] (fluid) {\texttt{fluid\_correlations.py}\\Black-oil PVT \\ and fluid properties};
 
-\node[box, below right=of main] (multi) {\texttt{multiphase\_correlations.py}\\Beggs--Brill / \\ Hagedorn--Brown};
+\node[box, below right=of main] (multi) {\texttt{multiphase\_correlations.py}\\Beggs-Brill / \\ Hagedorn-Brown};
 
-\node[box, below=2.5cm of fluid, minimum width=4.2cm] (components) {\texttt{network\_components.py}\\Nodes, wells, flowlines, \\ chokes, manifolds};
+\node[box, below=2.5cm of fluid, minimum width=4.2cm] (components)
+    {\texttt{network\_components.py}\\Nodes, wells, flowlines, \\ chokes, manifolds};
 
-\node[box, below=of components, minimum width=4.3cm] (solver) {\texttt{network\_solver.py}\\Network assembly, stable-branch logic, \\ rate accumulation, pressure march};
+\node[box, below=of components, minimum width=4.3cm] (solver)
+    {\texttt{network\_solver.py}\\Network assembly, stable-branch logic, \\
+     rate accumulation, pressure march};
 
 \node[box, below=of solver] (plot) {\texttt{plotting.py}\\Figures and dashboards};
 
 \draw[line] (main) -- (survey);
 \draw[line] (main) -- (fluid);
 \draw[line] (main) -- (multi);
-
 \draw[line] (survey) -- (components);
 \draw[line] (fluid) -- (components);
 \draw[line] (multi) -- (components);
-
 \draw[line] (components) -- (solver);
-\draw[line] (solver) -- node[left, font=\scriptsize] {profiles, pressures, rates} (plot);
-
+\draw[line] (solver) -- node[left, font=\scriptsize] {profiles, pressures, rates}
+    (plot);
 \draw[line] (fluid.east) to[out=0,in=90] (multi.north);
-% \draw[line] (solver.west) to[out=180,in=270] node[left, font=\scriptsize] {profiles, pressures, rates} (plot.west);
 
 \end{tikzpicture}
 \caption{Interaction between the main modules of the network simulator.}
@@ -808,25 +956,42 @@ Figure~\ref{fig:code-architecture} shows how the modules interact during a typic
 The full workflow can be summarized as follows:
 
 \begin{enumerate}
-    \item Survey data are read and converted into a usable trajectory representation.
-    \item Fluid properties are evaluated from the black-oil model.
-    \item Hydraulic correlations are selected according to inclination and flow conditions.
-    \item Physical components such as wells, flowlines, chokes, and nodes are instantiated.
-    \item The network solver applies the required boundary conditions and computes the rates and pressures across the system.
-    \item The results are visualized through nodal plots, well profiles, flowline traverses, and network summary figures.
+    \item Survey data are read and converted into a usable trajectory
+          representation \cite{Wolff1981}.
+    \item Fluid properties are evaluated from the black-oil model
+          \cite{Standing1977}.
+    \item Hydraulic correlations are selected according to inclination and flow
+          conditions \cite{BeggsBrill1973,HagedornBrown1965}.
+    \item Physical components such as wells, flowlines, chokes, and nodes are
+          instantiated.
+    \item The network solver applies the required boundary conditions and
+          computes the rates and pressures across the system \cite{Craft1991}.
+    \item The results are visualized through nodal plots, well profiles,
+          flowline traverses, and network summary figures.
 \end{enumerate}
 
-This modular architecture allows each part of the simulator to be validated independently while preserving a clear integration path for full-field or multiwell network calculations.
+This modular architecture allows each part of the simulator to be validated
+independently while preserving a clear integration path for full-field or
+multiwell network calculations.
 
-\subsection{Simulation Results and Pipesim Comparison}
+\subsection{Simulation Results and PIPESIM Comparison}
 
-In order to validate the simulator, it was created a simple network with 7 wells and three manifolds. The same network used in the previous section and shown in 
-Figure~\ref{fig:network_configuration} was implemented. The fluid characteristics, well configurations, resevoir produtivity index, pipelines diameters and
-boundary conditions were the same as the ones used in the previous section. 
+To validate the simulator, a network with 7 wells and three manifolds was
+constructed. The same network used in the previous section and shown in
+Figure~\ref{fig:network_configuration} was implemented. The fluid
+characteristics, well configurations, reservoir productivity index, pipeline
+diameters, and boundary conditions were identical to those used in the previous
+section.
 
-The resultant PVT properties used in the simulator are shown in the Figure~\ref{fig:pvt_properties}. Other outputs are obtained as result of the simulation. The Figure~\ref{fig:nodal_analysis} shows the nodal analysis for the 7 wells, where it is possible to see the IPR and OPR curves and the operating point for each well. 
-The wellbore pressure profiles for the 7 wells are shown in the Figure~\ref{fig:pressure_profiles} as well the flowlines pressure traverses are shown in the Figure~\ref{fig:flowline_profiles}. 
-The summary or network pressures and rates are shown in the Figure~\ref{fig:network_pressures} and, finally, the network schematic with the pressures and rates is shown in the Figure~\ref{fig:network_schematic}.
+The resulting PVT properties used in the simulator are shown in
+Figure~\ref{fig:pvt_properties} \cite{Standing1977}. Figure~\ref{fig:nodal_analysis}
+shows the nodal analysis for the 7 wells, where the IPR and OPR curves and the
+operating point for each well are visible \cite{Craft1991}. The wellbore pressure
+profiles for the 7 wells are shown in Figure~\ref{fig:pressure_profiles} and the
+flowline pressure traverses are shown in Figure~\ref{fig:flowline_profiles}. The
+summary of network pressures and rates is shown in
+Figure~\ref{fig:network_pressures} and the network schematic with pressures and
+rates is shown in Figure~\ref{fig:network_schematic}.
 
 \begin{figure}[htbp]
     \centering
@@ -834,35 +999,31 @@ The summary or network pressures and rates are shown in the Figure~\ref{fig:netw
     \caption{PVT properties used in the simulator for the 7 wells.}
     \label{fig:pvt_properties}
 \end{figure}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/fig1_nodal_all_wells.png}
-    \caption{Nodal analysis for the 7 wells, showing IPR and OPR curves and operating points.}
+    \caption{Nodal analysis for the 7 wells, showing IPR and OPR curves and
+             operating points.}
     \label{fig:nodal_analysis}
 \end{figure}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/fig2_wellbore_profiles.png}
     \caption{Wellbore pressure profiles for the 7 wells.}
     \label{fig:pressure_profiles}
 \end{figure}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/fig4_flowline_traverses.png}
     \caption{Flowline pressure traverses for the 7 wells.}
     \label{fig:flowline_profiles}
 \end{figure}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.9\textwidth]{figs/fig3_node_summary.png}
     \caption{Summary of network pressures and rates at key nodes.}
     \label{fig:network_pressures}
 \end{figure}
-
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.0\textwidth]{figs/fig6_network_schematic.png}
@@ -870,169 +1031,162 @@ The summary or network pressures and rates are shown in the Figure~\ref{fig:netw
     \label{fig:network_schematic}
 \end{figure}
 
-% ══════════════════════════════════════════════════════════════
 \clearpage
 \subsection{PIPESIM Mechanistic versus Python Comparison}
 \label{subsec:pipesim_vs_python}
 
-% ── 2.X.1  Overview ──────────────────────────────────────────
 \subsubsection{Overview and Code Structure}
 
-To supplement the PIPESIM network simulations, a Python model was developed
-to replicate the wellbore pressure traverses independently of a commercial
-simulator. The Python code constructs a seven-well network identical in
-topology to the PIPESIM model: each well is represented as a constant-mass
-source at the sandface, and the wellbore is discretised into 60 depth
-increments from perforations (TVD = 4{,}642~ft) to the wellhead. Boundary
-conditions (flowing bottomhole pressure $P_{wf} = 2{,}710.4$~psia,
-$q_{\text{liq}} \approx 6{,}000$~STB/d per well) were taken directly from
-the calibrated PIPESIM results.
+To supplement the \emph{PIPESIM} \cite{Schlumberger2023} network simulations,
+a Python model \cite{VanRossum2009} was developed to replicate the wellbore
+pressure traverses independently of a commercial simulator. The Python code
+constructs a seven-well network identical in topology to the \emph{PIPESIM}
+model: each well is represented as a constant-mass source at the sandface, and
+the wellbore is discretised into 60 depth increments from perforations
+(TVD~=~4{,}642~ft) to the wellhead. Boundary conditions (flowing bottomhole
+pressure $P_{wf} = 2{,}710.4$~psia, $q_{\text{liq}} \approx 6{,}000$~STB/d
+per well) were taken directly from the calibrated \emph{PIPESIM} results.
 
 Two pressure-traverse functions were implemented:
 
 \begin{enumerate}
-    \item \textbf{Isothermal traverse} — assumes a constant mixture density
-          ($\rho_{\text{mix}} = 48$~lb/ft$^{3}$) and a fixed Darcy--Weisbach
-          friction factor ($f = 0.018$), yielding a uniform pressure gradient
-          throughout the tubing string. This is the primary function used for
-          comparison with PIPESIM.
+    \item \textbf{Isothermal traverse:} assumes a constant mixture density
+          ($\rho_{\text{mix}} = 48$~lb/ft$^{3}$) and a fixed Darcy-Weisbach
+          friction factor ($f = 0.018$) \cite{Moody1944}, yielding a uniform
+          pressure gradient throughout the tubing string. This is the primary
+          function used for comparison with \emph{PIPESIM}.
 
-    \item \textbf{Geothermal traverse} — introduces a linear temperature
-          gradient from surface (80°F) to bottomhole (200°F, with sensitivity
-          cases at 180°F and 220°F). Fluid density is adjusted at each depth
-          increment using simplified temperature-dependent correlations for
-          oil, water, and gas, providing a first-order estimate of the
-          thermal effect on the pressure profile.
+    \item \textbf{Geothermal traverse:} introduces a linear temperature
+          gradient from surface (80$^\circ$F) to bottomhole (200$^\circ$F,
+          with sensitivity cases at 180$^\circ$F and 220$^\circ$F). Fluid
+          density is adjusted at each depth increment using simplified
+          temperature-dependent correlations for oil, water, and gas
+          \cite{Standing1977}, providing a first-order estimate of the thermal
+          effect on the pressure profile.
 \end{enumerate}
 
-The assignment permitted the selection of any mechanistic multiphase flow
-correlations. For vertical tubing, the TUFFP Unified model (M1) and the
-Gomez Enhanced correlation with Xiao Modified Film transition (M2) were
-selected as the two mechanistic models for the PIPESIM simulations, both
-of which are well-established for deepwater, high-rate multiphase
-applications. The Python implementation uses a simplified isothermal
-gradient as an independent analytical baseline; the impact of this thermal 
-assumption on the pressure profile is discussed 
-in the subsection below.
+For vertical tubing, the TUFFP Unified model \cite{Gomez2000} (M1) and the
+Gomez Enhanced correlation with Xiao Modified Film transition \cite{Xiao1990}
+(M2) were selected as the two mechanistic models for the \emph{PIPESIM}
+simulations, both of which are well-established for deepwater, high-rate
+multiphase applications. The Python implementation uses a simplified isothermal
+gradient as an independent analytical baseline; the impact of this thermal
+assumption on the pressure profile is discussed in the subsection below.
 
-% ── 2.X.2  Pressure Traverse Comparison ─────────────────────
 \subsubsection{Pressure Traverse Profile Comparison}
 
 Figure~\ref{fig:pressure_traverse} presents the wellbore pressure traverse
-profiles for all seven wells under three models: the Python isothermal
-model, PIPESIM Model~1 (M1, TUFFP Unified), and PIPESIM Model~2 (M2, Gomez
-Enhanced / Xiao Modified Film). The PIPESIM profiles are represented as
-straight lines connecting the known sandface and wellhead pressures, since
-only endpoint values were extracted from the simulator.
+profiles for all seven wells under three models: the Python isothermal model,
+\emph{PIPESIM} Model~1 (M1, TUFFP Unified \cite{Gomez2000}), and \emph{PIPESIM}
+Model~2 (M2, Gomez Enhanced / Xiao Modified Film \cite{Xiao1990}). The
+\emph{PIPESIM} profiles are represented as straight lines connecting the known
+sandface and wellhead pressures, since only endpoint values were extracted from
+the simulator.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=1.0\textwidth]{figs/pipesim_01_pressure_traverse.png}
-    \caption{Wellbore pressure traverse profiles for all seven wells.
-             Blue: Python isothermal model; red dashed: PIPESIM M1 (TUFFP
-             Unified); green dash-dot: PIPESIM M2 (Gomez Enhanced / Xiao
-             Modified Film). All wells share TVD~=~4{,}642~ft and
-             $P_{wf}=2{,}710.4$~psia.}
+    \caption{Wellbore pressure traverse profiles for all seven wells. Blue:
+             Python isothermal model; red dashed: \emph{PIPESIM} M1 (TUFFP
+             Unified \cite{Gomez2000}); green dash-dot: \emph{PIPESIM} M2
+             (Gomez Enhanced / Xiao Modified Film \cite{Xiao1990}). All wells
+             share TVD~=~4{,}642~ft and $P_{wf}=2{,}710.4$~psia.}
     \label{fig:pressure_traverse}
 \end{figure}
 
-The Python isothermal traverse predicts a wellhead pressure of
-1{,}190~psia uniformly across all seven wells, since the model uses a
-single constant mixture density independent of flow rate. The two PIPESIM
-mechanistic models yield higher wellhead pressures in the range
-1{,}282--1{,}346~psia, reflecting the more rigorous treatment of
-multiphase flow regimes, slip between phases, and frictional losses in
-the tubing string. The offset between the Python and PIPESIM curves is
-therefore a direct consequence of the isothermal, single-density
-assumption rather than a network-level discrepancy.
+The Python isothermal traverse predicts a wellhead pressure of 1{,}190~psia
+uniformly across all seven wells, since the model uses a single constant mixture
+density independent of flow rate. The two \emph{PIPESIM} mechanistic models yield
+higher wellhead pressures in the range 1{,}282--1{,}346~psia, reflecting the more
+rigorous treatment of multiphase flow regimes, slip between phases, and frictional
+losses in the tubing string \cite{Gomez2000,Xiao1990}. The offset between the
+Python and \emph{PIPESIM} curves is therefore a direct consequence of the
+isothermal, single-density assumption rather than a network-level discrepancy.
 
-% ── 2.X.3  Wellhead Pressure and Tubing ΔP ──────────────────
 \subsubsection{Wellhead Pressure and Tubing Pressure Drop}
 
 Figures~\ref{fig:wellhead_pressure} and~\ref{fig:tubing_dp} quantify the
-model-to-model spread at the wellhead and across the tubing string,
-respectively.
+model-to-model spread at the wellhead and across the tubing string, respectively.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/pipesim_02_wellhead_pressure.png}
-    \caption{Wellhead pressure comparison across the three flow models for
-             wells W1--W7. Python isothermal (blue): 1{,}190~psia for all
-             wells; PIPESIM M1 TUFFP (red): 1{,}282--1{,}319~psia; PIPESIM
-             M2 Gomez/Xiao (green): 1{,}304--1{,}346~psia.}
+    \caption{Wellhead pressure comparison across the three flow models for wells
+             W1--W7. Python isothermal (blue): 1{,}190~psia for all wells;
+             \emph{PIPESIM} M1 TUFFP \cite{Gomez2000} (red): 1{,}282--1{,}319~psia;
+             \emph{PIPESIM} M2 Gomez/Xiao \cite{Xiao1990} (green):
+             1{,}304--1{,}346~psia.}
     \label{fig:wellhead_pressure}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/pipesim_03_tubing_dp.png}
-    \caption{Tubing pressure drop ($P_{wf} - P_{wh}$) per well for all
-             three models. The shaded band represents the sensitivity range
-             between PIPESIM M1 and M2. Annotations show the M1--M2
-             difference in psia.}
+    \caption{Tubing pressure drop ($P_{wf} - P_{wh}$) per well for all three
+             models. The shaded band represents the sensitivity range between
+             \emph{PIPESIM} M1 and M2. Annotations show the M1--M2 difference
+             in psia.}
     \label{fig:tubing_dp}
 \end{figure}
 
-The Python model predicts a constant tubing $\Delta P$ of 1{,}520~psia
-across all wells — a flat line in Figure~\ref{fig:tubing_dp} — because
-the isothermal density assumption decouples the pressure gradient from
-flow rate. The PIPESIM mechanistic models produce tubing $\Delta P$
-values in the range 1{,}363--1{,}429~psia, approximately 90--160~psia
-lower than the Python estimate. This indicates that the isothermal model
-over-predicts the hydrostatic component of the pressure gradient by
-assuming a heavier-than-actual mixture throughout the full tubing length.
+The Python model predicts a constant tubing $\Delta P$ of 1{,}520~psia across
+all wells, a flat line in Figure~\ref{fig:tubing_dp}, because the isothermal
+density assumption decouples the pressure gradient from flow rate. The
+\emph{PIPESIM} mechanistic models produce tubing $\Delta P$ values in the range
+1{,}363--1{,}429~psia, approximately 90--160~psia lower than the Python estimate.
+This indicates that the isothermal model over-predicts the hydrostatic component
+of the pressure gradient by assuming a heavier-than-actual mixture throughout the
+full tubing length \cite{HagedornBrown1965}.
 
-% ── 2.X.4  Effect of Temperature Assumption ─────────────────
 \subsubsection{Effect of Temperature Assumption on the Pressure Profile}
 \label{subsubsec:temperature_effect}
 
 Figure~\ref{fig:temperature_effect} isolates the effect of the temperature
-assumption on the pressure traverse for representative well W1, comparing
-four temperature profiles against the PIPESIM M1 and M2 wellhead pressures.
+assumption on the pressure traverse for representative well W1, comparing four
+temperature profiles against the \emph{PIPESIM} M1 and M2 wellhead pressures.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.75\textwidth]{figs/pipesim_06_temperature_effect.png}
     \caption{Effect of temperature assumption on the W1 wellbore pressure
-             profile. Four Python cases are shown: isothermal at 200°F
-             (blue, solid); geothermal gradient 80--200°F (red, dashed);
-             shallow reservoir 80--180°F (green, dash-dot); hot reservoir
-             80--220°F (orange, dotted). Vertical dashed lines mark the
-             PIPESIM M1 and M2 wellhead pressures.}
+             profile. Four Python cases are shown: isothermal at 200$^\circ$F
+             (blue, solid); geothermal gradient 80--200$^\circ$F (red, dashed);
+             shallow reservoir 80--180$^\circ$F (green, dash-dot); hot reservoir
+             80--220$^\circ$F (orange, dotted). Vertical dashed lines mark the
+             \emph{PIPESIM} M1 and M2 wellhead pressures.}
     \label{fig:temperature_effect}
 \end{figure}
 
-All four temperature cases produce nearly identical pressure profiles,
-with the surface pressure clustering within a narrow band
-($\approx 1{,}620$--$1{,}640$~psia at the wellhead in the Python
-geothermal cases). This insensitivity to temperature arises because the
-simplified density correlations used in the geothermal traverse produce
-only small changes in mixture density over the range of temperatures
-considered. The dominant driver of the offset between the Python profiles
-and the PIPESIM endpoint values (1{,}292 and 1{,}304~psia) is therefore
-the choice of multiphase flow correlation — specifically the absence of
-a slip-corrected holdup model such as Hagedorn~\& Brown — rather than
-the thermal assumption.
+All four temperature cases produce nearly identical pressure profiles, with the
+surface pressure clustering within a narrow band ($\approx$1{,}620--1{,}640~psia
+at the wellhead in the Python geothermal cases). This insensitivity to temperature
+arises because the simplified density correlations used in the geothermal traverse
+produce only small changes in mixture density over the range of temperatures
+considered \cite{Standing1977}. The dominant driver of the offset between the
+Python profiles and the \emph{PIPESIM} endpoint values (1{,}292 and 1{,}304~psia)
+is therefore the choice of multiphase flow correlation, specifically the absence
+of a slip-corrected holdup model such as Hagedorn and Brown \cite{HagedornBrown1965},
+rather than the thermal assumption.
 
-These results confirm that for this well geometry and flow rate, adopting
-a geothermal gradient in place of an isothermal assumption has a second-
-order effect on wellhead pressure prediction, while the selection of
-multiphase flow model has a first-order effect.
+These results confirm that for this well geometry and flow rate, adopting a
+geothermal gradient in place of an isothermal assumption has a second-order effect
+on wellhead pressure prediction, while the selection of the multiphase flow model
+has a first-order effect.
 
-% ── 2.X.5  Flow Model Sensitivity (PIPESIM M1 vs M2) ────────
 \subsubsection{PIPESIM Flow Model Sensitivity: TUFFP Unified vs.\
                Gomez Enhanced / Xiao Modified Film}
 
-Figures~\ref{fig:liquid_rates} and~\ref{fig:junction_pressures} present
-the PIPESIM model sensitivity study across the two mechanistic models
-for well liquid rates and manifold junction pressures.
+Figures~\ref{fig:liquid_rates} and~\ref{fig:junction_pressures} present the
+\emph{PIPESIM} model sensitivity study across the two mechanistic models for well
+liquid rates and manifold junction pressures.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.92\textwidth]{figs/pipesim_04_liquid_rates.png}
-    \caption{Per-well total liquid rates from PIPESIM M1 (TUFFP Unified,
-             red) and M2 (Gomez Enhanced / Xiao Modified Film, green).
-             Annotations show the M1--M2 difference in STB/d.}
+    \caption{Per-well total liquid rates from \emph{PIPESIM} M1 (TUFFP Unified
+             \cite{Gomez2000}, red) and M2 (Gomez Enhanced / Xiao Modified Film
+             \cite{Xiao1990}, green). Annotations show the M1--M2 difference in
+             STB/d.}
     \label{fig:liquid_rates}
 \end{figure}
 
@@ -1040,35 +1194,33 @@ for well liquid rates and manifold junction pressures.
     \centering
     \includegraphics[width=0.75\textwidth]{figs/pipesim_05_junction_pressures.png}
     \caption{Manifold junction pressures at nodes M1, M2, and M3 for
-             PIPESIM M1 and M2. Both models yield identical junction
-             pressures (1{,}176.3, 1{,}140.6, and 1{,}182.5~psia
-             respectively), indicating that the flow model choice does
-             not propagate differences to the network junction level
-             under these conditions.}
+             \emph{PIPESIM} M1 and M2. Both models yield identical junction
+             pressures (1{,}176.3, 1{,}140.6, and 1{,}182.5~psia respectively),
+             indicating that the flow model choice does not propagate differences
+             to the network junction level under these conditions.}
     \label{fig:junction_pressures}
 \end{figure}
 
-The two mechanistic models produce total network liquid rates that agree
-to within 61~STB/d out of $\approx 45{,}000$~STB/d
-($< 0.14\%$ relative difference). Well-level rate differences are small
-and non-systematic (ranging from $-17$ to $+19$~STB/d), suggesting that
-the network operating point is stable regardless of which of the two
-correlation sets is used.
+The two mechanistic models produce total network liquid rates that agree to within
+61~STB/d out of approximately 45{,}000~STB/d (less than 0.14\% relative
+difference). Well-level rate differences are small and non-systematic (ranging
+from $-17$ to $+19$~STB/d), suggesting that the network operating point is stable
+regardless of which correlation set is used.
 
-At the wellhead, however, M2 (Gomez Enhanced / Xiao Modified Film)
-consistently predicts higher pressures than M1 (TUFFP Unified) by
-13--36~psia. This systematic offset reflects the different slip and
-friction treatments in the two mechanistic models: the Xiao Modified
-Film model for stratified-annular transition tends to predict higher
-frictional pressure losses in the vertical tubing compared to the TUFFP
-Unified approach. In a facility design context, this spread defines the
-model uncertainty band that should be carried forward into
-equipment-sizing calculations.
+At the wellhead, however, M2 (Gomez Enhanced / Xiao Modified Film \cite{Xiao1990})
+consistently predicts higher pressures than M1 (TUFFP Unified \cite{Gomez2000})
+by 13--36~psia. This systematic offset reflects the different slip and friction
+treatments in the two mechanistic models: the Xiao Modified Film model for
+stratified-annular transition tends to predict higher frictional pressure losses
+in the vertical tubing compared to the TUFFP Unified approach
+\cite{Xiao1990,Gomez2000}. In a facility design context, this spread defines the
+model uncertainty band that should be carried forward into equipment-sizing
+calculations.
 
 The identical junction pressures produced by M1 and M2
-(Figure~\ref{fig:junction_pressures}) indicate that the flowline and
-riser hydraulics, which dominate the network pressure balance at the
-manifold level, are insensitive to the choice of tubing correlation
-under these operating conditions. Practical consequences of model
-selection are therefore most significant for wellhead equipment ratings
-and choke sizing rather than for pipeline or riser design.
+(Figure~\ref{fig:junction_pressures}) indicate that the flowline and riser
+hydraulics, which dominate the network pressure balance at the manifold level,
+are insensitive to the choice of tubing correlation under these operating
+conditions. Practical consequences of model selection are therefore most
+significant for wellhead equipment ratings and choke sizing rather than for
+pipeline or riser design.
