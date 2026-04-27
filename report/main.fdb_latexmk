@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1777014368.66069 "main.aux" "main.bbl" "main" 1777014377.01097 0
+["bibtex main"] 1777307519.55194 "main.aux" "main.bbl" "main" 1777307527.08515 0
   "./references.bib" 1777012849 4680 cad795a15f5285c329b8dfbc3d6abd4c ""
   "C:/Users/Emuobosa P Ojoboh/AppData/Local/Programs/MiKTeX/bibtex/bst/natbib/plainnat.bst" 1284455456 26816 ffe5423d2019860bad9f54bc402fac15 ""
-  "main.aux" 1777014375 35785 66ef83bbcb7bf81cab9b6cfebaf300f4 "pdflatex"
+  "main.aux" 1777307525 35421 c79b32a9e3da4666eda0cb24fe4a972c "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1777014369.16843 "c:/Users/Emuobosa P Ojoboh/OneDrive - University of Oklahoma/Documents/TU Semesters/Spring 2026 Classes/PE-7023-01_Adv_Production_Design/Project/PE7023-Project/report/main.tex" "main.pdf" "main" 1777014377.01165 0
+["pdflatex"] 1777307520.06544 "c:/Users/Emuobosa P Ojoboh/OneDrive - University of Oklahoma/Documents/TU Semesters/Spring 2026 Classes/PE-7023-01_Adv_Production_Design/Project/PE7023-Project/report/main.tex" "main.pdf" "main" 1777307527.08582 0
   "C:/Users/Emuobosa" 1741115252 19086 745a136ddc87cab2044e0bd481b3e8d4 ""
   "C:/Users/Emuobosa P Ojoboh/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1776993945 219470 e9eed01fdfeebb4a5c64b505e863ae7a ""
   "C:/Users/Emuobosa P Ojoboh/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1762990081 24230788 a3eb4d4796c7e05ef0f522ef987aa671 ""
@@ -213,7 +213,7 @@
   "C:/Users/Emuobosa P Ojoboh/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/Emuobosa P Ojoboh/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1700127522 55487 80a65caedd3722f4c20a14a69e785d8f ""
   "c:/Users/Emuobosa" 1741115252 19086 745a136ddc87cab2044e0bd481b3e8d4 ""
-  "c:/Users/Emuobosa P Ojoboh/OneDrive - University of Oklahoma/Documents/TU Semesters/Spring 2026 Classes/PE-7023-01_Adv_Production_Design/Project/PE7023-Project/report/main.tex" 1777013979 3606 672ebbfc043f40587a84d341a90e0767 ""
+  "c:/Users/Emuobosa P Ojoboh/OneDrive - University of Oklahoma/Documents/TU Semesters/Spring 2026 Classes/PE-7023-01_Adv_Production_Design/Project/PE7023-Project/report/main.tex" 1777307502 3607 7262f4d2056c484ded85115dd426e8cd ""
   "figs/Pipeline Design.png" 1776873758 12652 e7fc0cd3c1356dcd412c25e0f1b92beb ""
   "figs/break_even_30.png" 1776786810 50815 47843b90b91c21f9324d9f5cc8734023 ""
   "figs/break_even_50.png" 1776786810 53859 1d532a93c884f289265dbe601f4f89e5 ""
@@ -256,21 +256,21 @@
   "figs/temp_vs_watercut_4wells.png" 1776368903 56735 8c966fe4e6b931f64fedb7af311c9599 ""
   "figs/temp_vs_watercut_7wells.png" 1776368903 51392 bc37a5572ab0000ddae2a8ee4c639d97 ""
   "figs/water_cut_forecast.png" 1776355603 27896 054fd70b0b70c344a8174298fed0296d ""
-  "main.aux" 1777014375 35785 66ef83bbcb7bf81cab9b6cfebaf300f4 "pdflatex"
-  "main.bbl" 1777014369 3914 beccfa13666d2bce1be3ac5923f25d3a "bibtex main"
-  "main.lof" 1777014375 8226 a1c9cbed8ec5df9245d9784ed4d06879 "pdflatex"
-  "main.lot" 1777014375 1403 e988a28c9c3010838134a0622220acf3 "pdflatex"
-  "main.out" 1777014375 4920 68b2fa7ab844ac880a12484bc3bdf5c7 "pdflatex"
-  "main.tex" 1777013979 3606 672ebbfc043f40587a84d341a90e0767 ""
-  "main.toc" 1777014375 3766 8b6f3ab984f475c73ab73bcbad224f21 "pdflatex"
+  "figs/well1_deviation.png" 1777307384 21631 49f4e673ad00cc789d57210eebc8f81a ""
+  "main.aux" 1777307525 35421 c79b32a9e3da4666eda0cb24fe4a972c "pdflatex"
+  "main.bbl" 1777307519 3914 beccfa13666d2bce1be3ac5923f25d3a "bibtex main"
+  "main.lof" 1777307525 8281 653d2f7d7cc5664f4d99b5d9106aac7f "pdflatex"
+  "main.lot" 1777307525 1448 55bee699150af1c356535811f8856555 "pdflatex"
+  "main.out" 1777307525 4418 741c4df6c67017c1d9121c594ee6a4c1 "pdflatex"
+  "main.tex" 1777307502 3607 7262f4d2056c484ded85115dd426e8cd ""
+  "main.toc" 1777307525 3561 c507ddf7b6d06cf78b8a06d80d6ba061 "pdflatex"
   "sections/00_titlepage.tex" 1777013500 796 e6850676c3762e1d472d305831f0d7a0 ""
   "sections/01_executive_summary.tex" 1776833437 3020 817b7a908b5f493aa25e3f46973265a7 ""
   "sections/02_introduction.tex" 1777012849 1539 c1be4e2b677550a117703d2a0c999803 ""
-  "sections/03_procedure.tex" 1777014343 57598 33a4550b910a7b0c993c5d6bc1a96601 ""
+  "sections/03_procedure.tex" 1777307384 58475 efe599d62df19059ac729aa2d89cdb9e ""
   "sections/04_results.tex" 1777013243 5582 74ddb048c2d9752372758ebf1964c88d ""
   "sections/05_conclusions.tex" 1777013051 5396 403916fe65d7e72a54fd428355b3ad88 ""
-  "sections/06_appendices.tex" 1776209811 982 113776236e9576bd7753962308b17c05 ""
-  "sections/07_addendum.tex" 1777014343 1221 f00976510b47e34d51dda63866eea768 ""
+  "sections/07_addendum.tex" 1777307442 2932 95689a36d0f72c43b063d82f3facbdb8 ""
   (generated)
   "main.aux"
   "main.lof"
