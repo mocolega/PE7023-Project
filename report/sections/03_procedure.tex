@@ -96,16 +96,38 @@ Figure~\ref{fig:pi_x_radii} but with a different x-axis.
 It was advised that asphaltene precipitation occurs at a pressure of 1,100~psia,
 so the minimum wellhead pressure should be at least 1,200~psia.
 A wellbore model of Well~1 was created using \emph{PIPESIM} \cite{Schlumberger2023}
-and the impact of tubing ID was evaluated. The results are shown in
-Figure~\ref{fig:well1_q_x_tubing_radius}. It can be observed that the flow rate
-exceeds the maximum allowed for tubing sizes greater than or equal to 2.922~inches.
+and the impact of tubing ID was evaluated. The well deviation survey is shwon in Figure~\ref{fig:well_deviation}, and the wellbore properties are shown in Table~\ref{tab:well_properties}. It was considered that the reservoir is located just after the end of the tubing.
+
+
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.7\textwidth]{figs/rate_vs_tubing_id.png}
-    \caption{Flow Rate vs. Tubing Internal Diameter for Well~1}
-    \label{fig:well1_q_x_tubing_radius}
+    \includegraphics[width=0.35\textwidth]{figs/well1_deviation.png}
+    \caption{Well Deviation Survey for Well~1}
+    \label{fig:well_deviation}
 \end{figure}
-The minimum tubing ID that allows producing the maximum flow rate was 2.922~inches,
+
+\begin{table}[h!]
+\centering
+\caption{Well and Thermal Parameters}
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+End of tubing location & 5000 ft MD \\
+Packer location & 100 ft above end of tubing \\
+Gas lift injection location & 100 ft above packer \\
+Overall wellbore heat transfer coefficient & 2 Btu/(h·ft$^2$·°F) \\
+Thermal conductivity of insulating material & 0.2 Btu/(h·ft·°F) \\
+Sea water temperature & 50 °F \\
+Reservoir depth & 5050 ft \\
+Productivity index & 5.9 STB/(d·psi) \\
+\bottomrule
+\end{tabular}
+\label{tab:well_properties}
+\end{table}
+
+The results are shown in
+Figure~\ref{fig:well1_q_x_tubing_radius}. The minimum tubing ID that allows producing the maximum flow rate was 2.922~inches,
 which corresponds to a tubing OD of 3.5~inches. Because at least 1~inch of annular
 space is required between the tubing and the casing, the minimum casing ID should
 be 5.5~inches. A 5.5~in ID casing corresponds to a 6.625~in OD casing. A 7~in OD
@@ -113,6 +135,14 @@ casing was selected in this project due to the improved productivity index and i
 status as a common casing size \cite{Craft1991}. A larger casing size would not be
 justified because the improvement in productivity index is not significant and would
 increase drilling and completion costs.
+
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.7\textwidth]{figs/rate_vs_tubing_id.png}
+    \caption{Flow Rate vs. Tubing Internal Diameter for Well~1}
+    \label{fig:well1_q_x_tubing_radius}
+\end{figure}
 
 The production forecast predicts that water cut will increase over time, and it was
 therefore necessary to evaluate the impact of water cut on the flow rate. The results
@@ -716,8 +746,7 @@ This module contains the pressure-gradient models used by the simulator
     \item inclined-flow calculations through the Beggs-Brill correlation
           \cite{BeggsBrill1973};
     \item a dispatcher function, \texttt{get\_correlation(...)}, that chooses
-          the appropriate correlation based on inclination angle, pipe diameter,
-          fluid object, and roughness.
+          the appropriate correlation based on inclination angle.
 \end{itemize}
 
 In the present architecture, this file is the hydraulic core of the simulator.

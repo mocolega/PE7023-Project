@@ -11,3 +11,4 @@
 *.toc
 __pycache__/
 *.ipynb_checkpoints
+report/main.fdb_latexmk
