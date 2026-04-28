@@ -13,7 +13,7 @@ This subsection describes the design of the default well. Because the wells were
 not drilled, it is necessary to specify the tubing and production casing.
 It was informed that the inflow can be modeled as a single-phase steady-state
 solution of the Darcy equation for a vertical fully penetrating well
-\cite{Darcy1856}. The Productivity Index (PI) equation is given by:
+\cite{lee_pressure_2003}. The Productivity Index (PI) equation is given by:
 \begin{equation}
     PI = \frac{q_{liq}}{\bar{p} - p_{wf}} = \frac{kh}{141.2 B_o \mu_o
     \left[\ln{\left(\frac{r_e}{r_{wf}}\right)}-0.5 + S\right]}
@@ -24,7 +24,7 @@ reservoir pressure, $p_{wf}$ is the bottomhole flowing pressure (psi), $k$ is
 the permeability in mD, $h$ is the net pay thickness in ft, $B_o$ is the oil
 formation volume factor (RB/STB), $\mu_o$ is the oil viscosity (cP), $r_e$ is
 the drainage radius (ft), $r_{wf}$ is the wellbore radius (ft), and $S$ is the
-skin factor \cite{Craft1991}.
+skin factor \cite{lee_pressure_2003}.
 The reservoir properties are given in Table~\ref{tab:reservoir_properties}.
 
 \begin{table}[htbp]
@@ -70,7 +70,7 @@ tubing size that allows producing the maximum flow rate for each development
 scenario. The maximum flow rate per well was defined as $q_{\max} / N_{wells}$,
 which is 6,428.57~STB/d. Figure~\ref{fig:pi_x_radii} shows the relationship
 between the Productivity Index and the wellbore radius for the given reservoir
-and fluid properties \cite{Craft1991}.
+and fluid properties.
 From the plot, it is observed that the PI range is between 5.5 and
 6.0~STB/d/psi for a casing OD between 4.5 and 7.75~inches (9\% improvement),
 but the difference between the 7 and 7.75~inch cases is only 0.1~STB/d/psi
@@ -132,7 +132,7 @@ which corresponds to a tubing OD of 3.5~inches. Because at least 1~inch of annul
 space is required between the tubing and the casing, the minimum casing ID should
 be 5.5~inches. A 5.5~in ID casing corresponds to a 6.625~in OD casing. A 7~in OD
 casing was selected in this project due to the improved productivity index and its
-status as a common casing size \cite{Craft1991}. A larger casing size would not be
+status as a common casing size \cite{lee_oil_2026}. A larger casing size would not be
 justified because the improvement in productivity index is not significant and would
 increase drilling and completion costs.
 
@@ -156,7 +156,7 @@ does not produce the maximum allowed flow rate for water cuts higher than 10\%.
 \end{figure}
 For water cuts higher than 10\%, the maximum liquid rate is not achieved and it is
 necessary to implement artificial lift. The only artificial lift option available is
-gas-lift \cite{Lea2008}. The gas-lift rate was evaluated for different water cuts
+gas-lift. The gas-lift rate was evaluated for different water cuts
 and the results are shown in Figure~\ref{fig:well1_gas_lift_rate_x_water_cut}.
 It is observed that the minimum gas-lift rate that allows producing the maximum
 liquid rate across all water cuts is 1.5~MMscf/d.
@@ -440,7 +440,7 @@ production profile for Well~1 is shown in Figure~\ref{fig:production_profile}.
     \label{fig:production_profile}
 \end{figure}
 The required gas-lift rate for each water cut was determined using the results
-from Figure~\ref{fig:well1_gas_lift_rate_x_water_cut} \cite{Lea2008}. The
+from Figure~\ref{fig:well1_gas_lift_rate_x_water_cut}. The
 gas-lift rate profile for Well~1 is shown in Figure~\ref{fig:gas_lift_profile}.
 For water cut values not directly available in the original plot, linear
 interpolation was used.
@@ -544,12 +544,12 @@ approximately 78\% for the 30~\$/BBL case.
 \subsection*{Optimization of Operating Conditions}
 
 It is possible to optimize the operating conditions for each water cut scenario
-to maximize the net profit \cite{Lea2008}. The net profit is given by the
+to maximize the net profit. The net profit is given by the
 difference between the revenue and the costs. The revenue is the product of the
 oil sale price and the oil production, while the costs are the sum of the water
 treatment cost and the gas-lift injection cost.
 The optimization process used a simple algorithm that evaluates the net profit
-for different gas-lift rates, implemented in Python \cite{VanRossum2009}. This
+for different gas-lift rates, implemented in Python. This
 way, the well produces at a flow rate below the maximum allowed but at a more
 profitable operating point. The implemented algorithm is shown in the following
 pseudocode.
@@ -693,14 +693,14 @@ optimization.
 
 In this section the implementation of the network simulator and the results
 obtained from the simulations are discussed. The code was implemented in Python
-\cite{VanRossum2009} using an AI coding assistant. The subsurface and surface
+ using an AI coding assistant. The subsurface and surface
 network were integrated so that the simulator evaluates the impact of the surface
 network on the subsurface and vice versa.
 
 \section{Code Structure and Module Interaction}
 
 The network simulator is organized as a set of modular Python files
-\cite{VanRossum2009}, where each file has a well-defined responsibility in the
+, where each file has a well-defined responsibility in the
 workflow. The code is divided into six main layers: input handling,
 fluid-property evaluation, multiphase pressure-drop models, physical network
 components, network solution, and visualization. This structure makes the
@@ -810,7 +810,7 @@ of the well.
 
 In addition, the \texttt{Well} class contains the inflow model. It
 automatically switches between a linear productivity-index relation
-\cite{Craft1991} and a Vogel-type inflow relation \cite{Vogel1968}, depending
+and a Vogel-type inflow relation \cite{Vogel1968}, depending
 on reservoir pressure relative to bubble-point pressure. It can evaluate either:
 \[
 q = f(p_{wf})
@@ -877,7 +877,7 @@ The solver supports two main boundary-condition types:
 \begin{enumerate}
     \item \textbf{Fixed-pressure sink:} the separator pressure is prescribed,
           and the rates are obtained from the coupling between inflow and
-          tubing/outflow performance \cite{Craft1991}.
+          tubing/outflow performance.
     \item \textbf{Fixed-rate sink:} the total liquid rate is prescribed, and
           the solver determines the common wellhead pressure that makes the sum
           of the stable-branch well rates match the target throughput.
@@ -892,7 +892,7 @@ step, it also stores pressure-traverse profiles for later plotting.
 \subsubsection*{Nodal analysis utility}
 
 The same module also provides a helper function that generates IPR and OPR
-curves for a single well \cite{Craft1991}. This function is used later by the
+curves for a single well \cite{brown_nodal_1985}. This function is used later by the
 visualization layer to show the operating point in a classical nodal-analysis
 plot.
 
@@ -994,7 +994,7 @@ The full workflow can be summarized as follows:
     \item Physical components such as wells, flowlines, chokes, and nodes are
           instantiated.
     \item The network solver applies the required boundary conditions and
-          computes the rates and pressures across the system \cite{Craft1991}.
+          computes the rates and pressures across the system.
     \item The results are visualized through nodal plots, well profiles,
           flowline traverses, and network summary figures.
 \end{enumerate}
@@ -1013,9 +1013,9 @@ diameters, and boundary conditions were identical to those used in the previous
 section.
 
 The resulting PVT properties used in the simulator are shown in
-Figure~\ref{fig:pvt_properties} \cite{Standing1977}. Figure~\ref{fig:nodal_analysis}
+Figure~\ref{fig:pvt_properties}. Figure~\ref{fig:nodal_analysis}
 shows the nodal analysis for the 7 wells, where the IPR and OPR curves and the
-operating point for each well are visible \cite{Craft1991}. The wellbore pressure
+operating point for each well are visible. The wellbore pressure
 profiles for the 7 wells are shown in Figure~\ref{fig:pressure_profiles} and the
 flowline pressure traverses are shown in Figure~\ref{fig:flowline_profiles}. The
 summary of network pressures and rates is shown in
@@ -1067,7 +1067,7 @@ rates is shown in Figure~\ref{fig:network_schematic}.
 \subsubsection{Overview and Code Structure}
 
 To supplement the \emph{PIPESIM} \cite{Schlumberger2023} network simulations,
-a Python model \cite{VanRossum2009} was developed to replicate the wellbore
+a Python model  was developed to replicate the wellbore
 pressure traverses independently of a commercial simulator. The Python code
 constructs a seven-well network identical in topology to the \emph{PIPESIM}
 model: each well is represented as a constant-mass source at the sandface, and

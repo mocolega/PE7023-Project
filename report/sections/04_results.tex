@@ -3,15 +3,15 @@
 % =============================================================
 
 \chapter{Final Network Configuration and Production Strategy}
-
+\label{chap:final_network}
 % ----- Subsection 1 -------------------------------------------
 \section{Wells}
 \label{sec:res_wells}
 The well design process was developed as described in Section~\ref{subsec:well}.
 The tubing and production casing were defined for the default well using
 \emph{PIPESIM} nodal analysis \cite{Schlumberger2023} and the Darcy productivity
-index formulation \cite{Craft1991}. The gas-lift rate needed to maintain the
-production rate of 6,428.57~STB/d was also determined \cite{Lea2008}. The final
+index formulation. The gas-lift rate needed to maintain the
+production rate of 6,428.57~STB/d was also determined. The final
 well design is shown in Table~\ref{tab:well_design}.
 
 \begin{table}[ht]
@@ -28,7 +28,7 @@ well design is shown in Table~\ref{tab:well_design}.
     \end{tabular}
 \end{table}
 
-Gas-lift is required for water cuts higher than 5\% \cite{Lea2008}. The maximum
+Gas-lift is required for water cuts higher than 5\%. The maximum
 gas-lift rate needed is 1.6~MMscf/d at a water cut of 95\%. Table~\ref{tab:gas_lift}
 shows the minimum gas-lift rate required for each water cut scenario.
 Using these gas-lift rates also ensures that the wellhead pressure remains above
@@ -71,12 +71,12 @@ frictional losses at higher water fractions \cite{BeggsBrill1973}. All watercut
 scenarios remain within the WHP constraint without additional intervention.
 
 Thermal analysis confirmed that full 7-well production maintains outlet
-temperatures above the WAT of 100\textdegree F across all water cuts \cite{Bai2005}.
+temperatures above the WAT of 100\textdegree F across all water cuts.
 However, under reduced production (4~wells) with 1~inch of insulation, the
 outlet temperature drops to 86.98\textdegree F at WC~=~2\%, below the WAT
 and posing a wax deposition risk. A minimum insulation thickness of
 \textbf{2~inches} ($k = 0.2$~Btu/(h$\cdot$\textdegree F$\cdot$ft)) is
-therefore specified \cite{Bai2005}, raising the worst-case outlet temperature to
+therefore specified, raising the worst-case outlet temperature to
 107.5\textdegree F. The key pipeline design parameters are summarised in
 Table~\ref{tab:pipeline_summary}.
 
@@ -108,13 +108,13 @@ necessary to maintain the minimum wellhead pressure under that condition, the
 total field liquid production should be reduced to 19,285~STB/d, corresponding
 to four wells producing at the maximum liquid rate.
 The economic analysis shows that it is more profitable to produce with a reduced
-gas-lift injection rate rather than at the maximum allowable rate \cite{Lea2008}.
+gas-lift injection rate rather than at the maximum allowable rate.
 Figures~\ref{optimal_gas_lift_50} and~\ref{optimal_gas_lift_30} show the optimal
 gas-lift injection rate for oil prices of \$50/bbl and \$30/bbl, respectively.
 
 \section{Network Simulator}
 
-A network simulator was developed in Python \cite{VanRossum2009} to model the
+A network simulator was developed in Python to model the
 production of the field. The Hagedorn-Brown correlation \cite{HagedornBrown1965}
 was used to model two-phase flow in the wells and the Beggs-Brill correlation
 \cite{BeggsBrill1973} was used to model two-phase flow in the pipeline.

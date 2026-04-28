@@ -17,14 +17,13 @@ with the selected completion and surface-facility parameters.
 All seven producers were designed with 3.5-in tubing and sized for individual
 plateau rates of approximately 6,400~STB/d.
 Gas-lift was selected as the primary artificial-lift mechanism to supplement
-reservoir energy as bottomhole flowing pressure declines over the field life
-\cite{Lea2008}.
+reservoir energy as bottomhole flowing pressure declines over the field life.
 Sensitivity analysis showed that the combination of tubing size and injection
 gas rate provides sufficient operating flexibility to accommodate the expected
 range of water-cut increase and GOR evolution without requiring tubing
 replacement.
 The nodal analysis solutions confirmed stable, unique operating points for each
-well at plateau conditions \cite{Craft1991}, with bottomhole flowing pressures
+well at plateau conditions, with bottomhole flowing pressures
 comfortably above the bubble point throughout the early production period.
 
 \section{Pipeline and Riser System}
@@ -46,7 +45,7 @@ operating envelope.
 
 \section{Python Simulator and PIPESIM Benchmarking}
 
-The object-oriented Python simulator developed in Part~2 \cite{VanRossum2009}
+The object-oriented Python simulator developed in Part~2 
 reproduced the \emph{PIPESIM} \cite{Schlumberger2023} mechanistic-model results
 within acceptable tolerances across the full range of flow conditions tested.
 Pressure-drop predictions along the pipeline agreed to within a few percent
@@ -72,7 +71,7 @@ assumptions yielded a positive net present value, confirming project viability
 under the base-case scenario.
 The production forecast is sensitive primarily to the rate of water-cut
 increase and the cost of gas-lift compression; both parameters warrant
-closer definition during front-end engineering \cite{Lea2008}.
+closer definition during front-end engineering.
 
 \section{Recommendations}
 
@@ -86,11 +85,11 @@ to a final investment decision:
     \item Perform a full dynamic simulation of the pipeline and riser to
           quantify slug volumes and confirm the sizing of slug-catcher
           facilities at the host \cite{Schlumberger2023}.
-    \item Extend the Python nodal-analysis simulator \cite{VanRossum2009} to
+    \item Extend the Python nodal-analysis simulator to
           a time-stepping reservoir-coupled model to generate a rigorous
           field-decline curve and refine the economic analysis.
     \item Evaluate alternative lift strategies, in particular electrical
           submersible pumps, for the later field-life period when reservoir
           pressure and GOR conditions move outside the efficient operating
-          window of gas-lift \cite{Lea2008}.
+          window of gas-lift.
 \end{itemize}
